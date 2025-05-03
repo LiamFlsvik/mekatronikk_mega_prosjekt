@@ -1,46 +1,55 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
-#include <memory>
-#include <vector>
-#include <cmath>
-
+#include <moveit/robot_model_loader/robot_model_loader.h>
+#include <moveit/robot_state/robot_state.h>
+#include <geometry_msgs/msg/pose.hpp>
 using moveit::planning_interface::MoveGroupInterface;
 
-class robot_controller_test_home: public rclcpp::Node, public std::enable_shared_from_this<robot_controller_test_home>
+class robot_controller_test_home: public rclcpp::Node
 {
+    public:
+    robot_controller_test_home(): Node("robot_controller_test_home_node"),
+    robot_model_loader_(std::make_shared<rclcpp::Node>(this->get_name()), "robot_description"),
+    robot_model_(robot_model_loader_.getModel()),
+    robot_state_(std::make_shared<moveit::core::RobotState>(robot_model_)),
+    planning_group_("ur3"){
+        
+        go_to_home_position();
 
-    robot_controller_test_home(): Node("robot_controller_test_home_node"), move_group_interface_(std::shared_ptr<rclcpp::Node>(std::static_pointer_cast<rclcpp::Node>(this->shared_from_this())), "ur_manipulator"){
-
-    home_pose = []{
-    geometry_msgs::msg::Pose msg;
-    msg.orientation.w = 1.0;
-    msg.position.x = 0.5;
-    msg.position.y = -0.5;
-    msg.position.z = 0.5;
-    return msg;
-    }();
-
-    go_to_home_position();
-    
     }
 
-
-
-
+   
     void go_to_home_position()
     {
-        move_group_interface.setPoseTarget(home_pose);
+        moveit::planning_interface::MoveGroupInterface move_group_interface(std::make_shared<rclcpp::Node>(this->get_name()), planning_group_);
         
-        move_group_interface.move();
-        RCLCPP_INFO(this->get_logger(), "Moving to home position");
-        move_group_interface.setStartStateToCurrentState();
+        //get the current pose of the robot
+        auto current_pose = move_group_interface.getCurrentPose();
+
+        //Set the home position
+        home_pose.position.x = 1;
+        home_pose.position.y = 1;
+        home_pose.position.z = 1;
         
+        bool found_ik = robot_state_->setFromIK(joint_model_group_, home_pose);
+        if (found_ik)
+        {
+            RCLCPP_INFO(this->get_logger(), "Inverse Kinematic solution found.");
+        }
+        else
+        {
+            RCLCPP_INFO(this->get_logger(), "Inverse Kinematic solution not found.");
+        }
 
     }
 
 private:
-geometry_msgs::msg::Pose home_pose;
- moveit::planning_interface::MoveGroupInterface move_group_interface;
+    robot_model_loader::RobotModelLoader robot_model_loader_;
+    moveit::core::RobotModelPtr robot_model_;
+    moveit::core::RobotStatePtr robot_state_;
+    std::string planning_group_;
+    const moveit::core::JointModelGroup* joint_model_group_;
+    geometry_msgs::msg::Pose home_pose;
 
 
 };

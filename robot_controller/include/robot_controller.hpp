@@ -7,6 +7,9 @@
 #include <moveit/robot_state/robot_state.hpp>
 #include <moveit/planning_scene_interface/planning_scene_interface.hpp>
 #include <moveit/move_group_interface/move_group_interface.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2/LinearMath/Quaternion.hpp>
+
 
 using RobotModelLoader = robot_model_loader::RobotModelLoader;
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
@@ -20,72 +23,101 @@ public:
     robot_model_(robot_model_loader_.getModel()),
     robot_state_(std::make_shared<moveit::core::RobotState>(robot_model_)),
     PLANNING_GROUP("ur_manipulator"),
-    move_group_interface(std::shared_ptr<rclcpp::Node>(this), PLANNING_GROUP)
-  {
-    RCLCPP_INFO(get_logger(), "Robot Controller Node Started");
-    joint_model_group_ = robot_model_->getJointModelGroup(PLANNING_GROUP);
-    RCLCPP_INFO(get_logger(), "Move Group Interface Initialized");
+    move_group_interface(std::shared_ptr<rclcpp::Node>(this), PLANNING_GROUP),
+    logger(rclcpp::get_logger("robot_controller_node")){
+    
+
+    move_group_interface.setPlannerId("pilz_industrial_motion_planner");
+    move_group_interface.setPlannerId("PTP");
+    RCLCPP_INFO(logger, "Robot Controller Node Started");
+   
     go_to_home_position();
     for (int i = 0; i < 5; ++i) {
-      RCLCPP_INFO(get_logger(), "Scanning workplace %d", i);
-      plan_with_constraints();
+      RCLCPP_INFO(logger, "Scanning workplace %d", i);
+      interpolate_poses();
     }
+
   }
 
-void plan_with_constraints(){
-  
-  joint_model_group_= move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
-  robot_state_ = move_group_interface.getCurrentState();
-  std::vector<double> joint_group_positions;
-  robot_state_->copyJointGroupPositions(joint_model_group_, joint_group_positions);
-  RCLCPP_INFO(get_logger(), "Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
-  RCLCPP_INFO(get_logger(), "End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
+void interpolate_poses(){
+  //x² + y² = r²
+  //r = 0.1
+  //Trajectory radius
+  const double r = 0.45; 
+  const double height = 0.3;
+  //Number of points
+  const double num_points = 10;
+  //Angle increment
+  const double angle_increment = 2 * M_PI / num_points;
+  double angle = 0.0; 
+  //Loop through the points
+  //double c = 2*r*r*cos(angle_increment)*cos(angle_increment);
 
-// Constrains
-  moveit_msgs::msg::OrientationConstraint ocm;
-  ocm.link_name = "tool0";
-  ocm.header.frame_id = "base_link";
-  ocm.orientation.w = 1.0;
-  ocm.absolute_x_axis_tolerance = 0.1;
-  ocm.absolute_y_axis_tolerance = 0.1;
-  ocm.absolute_z_axis_tolerance = 0.1;
-  ocm.weight = 1.0;
-  // Add the constraint to the path constraints
-  moveit_msgs::msg::Constraints test_constraints;
-  test_constraints.orientation_constraints.push_back(ocm);
-  move_group_interface.setPathConstraints(test_constraints);
+  for (int i = 0; i < num_points; ++i) {
+    angle = i * angle_increment;
+    double x = r * cos(angle);
+    double y = r * sin(angle);
+    // Store the point in the poses vector
+    move_robot(x,y,height,0,-M_PI,angle);
+    //poses.push_back({{x, y}, {x, y}});
+  }
+}
 
-  moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
-  geometry_msgs::msg::Pose start_pose = move_group_interface.getCurrentPose().pose;
- 
-  start_state.setFromIK(joint_model_group_, start_pose);
-  move_group_interface.setStartState(start_state);
-
-
-  for (int i = 0; i < 3; i++) {
+void move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
+  //Endofecter roll pitch and yaw:
+    tf2::Quaternion quat;
+    quat.setRPY(roll, pitch, yaw);
+    geometry_msgs::msg::Quaternion msg_quat = tf2::toMsg(quat);
+  //Robot pose
     geometry_msgs::msg::Pose target_pose;
-    target_pose.position.x = this->poses[i][0].first;
-    target_pose.position.y = this->poses[i][0].second;
-    target_pose.position.z = 0.0;
-    target_pose.orientation.w = 1.0;
+    target_pose.orientation = msg_quat;
+    target_pose.position.x = x;
+    target_pose.position.y = y;
+    target_pose.position.z = z;
     move_group_interface.setPoseTarget(target_pose);
-    moveit::planning_interface::MoveGroupInterface::Plan plan;
-    auto success = move_group_interface.plan(plan);
-    if (success) {
-      RCLCPP_INFO(get_logger(), "Planning succeeded");
-      move_group_interface.execute(plan);
-      std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  //Plan
+    moveit::planning_interface::MoveGroupInterface::Plan plan1;
+    auto const sucess = static_cast<bool>(move_group_interface.plan(plan1)); 
+    
+    if (sucess) {
+      RCLCPP_INFO(logger, "Plan 1 success");
+      RCLCPP_ERROR(logger, "position: x: %f, y: %f, z: %f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
+      move_group_interface.execute(plan1);
+      
     } else {
-      RCLCPP_ERROR(get_logger(), "Planning failed");
+      RCLCPP_ERROR(logger, "Plan 1 failed");
+      return;
     }
+}
+void scan_workplace(){
+  //Endofecter roll pitch and yaw:
+    tf2::Quaternion quat;
+    quat.setRPY(0, 0, -M_PI/2);
+    geometry_msgs::msg::Quaternion msg_quat = tf2::toMsg(quat);
+  //Robot pose
+    geometry_msgs::msg::Pose target_pose;
+    target_pose.orientation = msg_quat;
+    target_pose.position.x = 0.15;
+    target_pose.position.y = 0.15;
+    target_pose.position.z = 0.5;
+    move_group_interface.setPoseTarget(target_pose);
 
-  }
-
-
-  robot_state_ = move_group_interface.getCurrentState();
-  
-
-  go_to_home_position();
+  //Plan
+    moveit::planning_interface::MoveGroupInterface::Plan plan1;
+    auto const sucess = static_cast<bool>(move_group_interface.plan(plan1)); 
+    
+    if (sucess) {
+      RCLCPP_INFO(logger, "Plan 1 success");
+      RCLCPP_ERROR(logger, "position: x: %f, y: %f, z: %f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
+      move_group_interface.execute(plan1);
+      
+    } else {
+      RCLCPP_ERROR(logger, "Plan 1 failed");
+      return;
+    }
+    // Move to home position
+    go_to_home_position();
 }
 
   void go_to_home_position()
@@ -97,7 +129,7 @@ void plan_with_constraints(){
       move_group_interface.execute(plan);
       std::this_thread::sleep_for(std::chrono::seconds(1));
     } else {
-      RCLCPP_ERROR(get_logger(), "Home planning failed");
+      RCLCPP_ERROR(logger, "Home planning failed");
     }
   }
 
@@ -111,5 +143,8 @@ private:
   MoveGroupInterface move_group_interface;
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   rclcpp::TimerBase::SharedPtr startup_timer_;
+  rclcpp::Logger logger;
+  tf2::Quaternion quat;
+  
 };
 

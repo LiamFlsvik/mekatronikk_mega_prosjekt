@@ -10,6 +10,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2/LinearMath/Quaternion.hpp>
 
+#include <color_logger.hpp>
 
 using RobotModelLoader = robot_model_loader::RobotModelLoader;
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
@@ -26,14 +27,16 @@ public:
     move_group_interface(std::shared_ptr<rclcpp::Node>(this), PLANNING_GROUP),
     logger(rclcpp::get_logger("robot_controller_node")){
     
-
-    move_group_interface.setPlannerId("pilz_industrial_motion_planner");
+    
+    move_group_interface.setPlanningPipelineId("pilz_industrial_motion_planner");
     move_group_interface.setPlannerId("PTP");
-    RCLCPP_INFO(logger, "Robot Controller Node Started");
+    RCLCPP_INFO(logger,"%sRobot Planning Pipeline:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlanningPipelineId().c_str(),COLOR_RESET);
+    RCLCPP_INFO(logger,"%sRobot Planning Id:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlannerId().c_str(),COLOR_RESET);
    
     go_to_home_position();
+
     for (int i = 0; i < 5; ++i) {
-      RCLCPP_INFO(logger, "Scanning workplace %d", i);
+      RCLCPP_INFO(logger, "%sScanning workplace %d%s", COLOR_BLUE, i, COLOR_RESET);
       interpolate_poses();
     }
 
@@ -43,24 +46,23 @@ void interpolate_poses(){
   //x² + y² = r²
   //r = 0.1
   //Trajectory radius
-  const double r = 0.45; 
+  const double r = 0.4; 
   const double height = 0.3;
   //Number of points
-  const double num_points = 10;
+  const double num_points = 100;
   //Angle increment
   const double angle_increment = 2 * M_PI / num_points;
-  double angle = 0.0; 
-  //Loop through the points
-  //double c = 2*r*r*cos(angle_increment)*cos(angle_increment);
 
   for (int i = 0; i < num_points; ++i) {
-    angle = i * angle_increment;
+    double angle = i * angle_increment;
     double x = r * cos(angle);
     double y = r * sin(angle);
     // Store the point in the poses vector
     move_robot(x,y,height,0,-M_PI,angle);
     //poses.push_back({{x, y}, {x, y}});
+    
   }
+  
 }
 
 void move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
@@ -81,12 +83,12 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     auto const sucess = static_cast<bool>(move_group_interface.plan(plan1)); 
     
     if (sucess) {
-      RCLCPP_INFO(logger, "Plan 1 success");
-      RCLCPP_ERROR(logger, "position: x: %f, y: %f, z: %f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
+      RCLCPP_INFO(logger, "%sPlan success%s", COLOR_GREEN, COLOR_RESET);
+      RCLCPP_INFO(logger, "%sposition: x: %f, y: %f, z: %f %s",COLOR_GREEN, target_pose.position.x, target_pose.position.y, target_pose.position.z, COLOR_RESET);
       move_group_interface.execute(plan1);
       
     } else {
-      RCLCPP_ERROR(logger, "Plan 1 failed");
+      RCLCPP_ERROR(logger, "Plan failed");
       return;
     }
 }
@@ -108,12 +110,12 @@ void scan_workplace(){
     auto const sucess = static_cast<bool>(move_group_interface.plan(plan1)); 
     
     if (sucess) {
-      RCLCPP_INFO(logger, "Plan 1 success");
-      RCLCPP_ERROR(logger, "position: x: %f, y: %f, z: %f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
+      RCLCPP_INFO(logger, "Plan success");
+      RCLCPP_INFO(logger, "position: x: %f, y: %f, z: %f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
       move_group_interface.execute(plan1);
       
     } else {
-      RCLCPP_ERROR(logger, "Plan 1 failed");
+      RCLCPP_ERROR(logger, "Plan failed");
       return;
     }
     // Move to home position
@@ -126,6 +128,7 @@ void scan_workplace(){
     move_group_interface.setJointValueTarget(home_joints);
     MoveGroupInterface::Plan plan;
     if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS) {
+      RCLCPP_INFO(logger, "%sHome position successfully reached%s", COLOR_GREEN, COLOR_RESET);
       move_group_interface.execute(plan);
       std::this_thread::sleep_for(std::chrono::seconds(1));
     } else {

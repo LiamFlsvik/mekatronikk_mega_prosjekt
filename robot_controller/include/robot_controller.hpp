@@ -35,38 +35,46 @@ public:
    
     go_to_home_position();
 
-    for (int i = 0; i < 5; ++i) {
-      RCLCPP_INFO(logger, "%sScanning workplace %d%s", COLOR_BLUE, i, COLOR_RESET);
-      interpolate_poses();
-    }
+    
+    RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
+    scan_workplace();
+    
 
   }
 
-void interpolate_poses(){
+void scan_workplace(){
   //x² + y² = r²
-  //r = 0.1
   //Trajectory radius
-  const double r = 0.4; 
-  const double height = 0.3;
+  //parameters
+  const double r = 0.4; //scan radius
+  const double height = 0.3; //initial scan height
+  double scan_depth_offset = height -0.2;
+  if (scan_depth_offset < 0.0){
+    scan_depth_offset = 0.01;
+  }
+  
+
+
   //Number of points
-  const double num_points = 100;
+  const double num_points = 15;
   //Angle increment
   const double angle_increment = 2 * M_PI / num_points;
-
   for (int i = 0; i < num_points; ++i) {
     double angle = i * angle_increment;
     double x = r * cos(angle);
     double y = r * sin(angle);
-    // Store the point in the poses vector
     move_robot(x,y,height,0,-M_PI,angle);
-    //poses.push_back({{x, y}, {x, y}});
-    
+    //Move closer to potential objects
+    move_robot(x,y,scan_depth_offset,0,-M_PI,angle);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //move further away from potential objects
+    move_robot(x,y,scan_depth_offset,0,-M_PI,angle);
+
   }
-  
 }
 
 void move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
-  //Endofecter roll pitch and yaw:
+  //End effector roll pitch and yaw:
     tf2::Quaternion quat;
     quat.setRPY(roll, pitch, yaw);
     geometry_msgs::msg::Quaternion msg_quat = tf2::toMsg(quat);
@@ -76,55 +84,27 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     target_pose.position.x = x;
     target_pose.position.y = y;
     target_pose.position.z = z;
+
     move_group_interface.setPoseTarget(target_pose);
 
   //Plan
-    moveit::planning_interface::MoveGroupInterface::Plan plan1;
-    auto const sucess = static_cast<bool>(move_group_interface.plan(plan1)); 
-    
+    moveit::planning_interface::MoveGroupInterface::Plan plan;
+    auto const sucess = static_cast<bool>(move_group_interface.plan(plan)); 
     if (sucess) {
       RCLCPP_INFO(logger, "%sPlan success%s", COLOR_GREEN, COLOR_RESET);
       RCLCPP_INFO(logger, "%sposition: x: %f, y: %f, z: %f %s",COLOR_GREEN, target_pose.position.x, target_pose.position.y, target_pose.position.z, COLOR_RESET);
-      move_group_interface.execute(plan1);
+      move_group_interface.execute(plan);
       
     } else {
       RCLCPP_ERROR(logger, "Plan failed");
       return;
     }
 }
-void scan_workplace(){
-  //Endofecter roll pitch and yaw:
-    tf2::Quaternion quat;
-    quat.setRPY(0, 0, -M_PI/2);
-    geometry_msgs::msg::Quaternion msg_quat = tf2::toMsg(quat);
-  //Robot pose
-    geometry_msgs::msg::Pose target_pose;
-    target_pose.orientation = msg_quat;
-    target_pose.position.x = 0.15;
-    target_pose.position.y = 0.15;
-    target_pose.position.z = 0.5;
-    move_group_interface.setPoseTarget(target_pose);
 
-  //Plan
-    moveit::planning_interface::MoveGroupInterface::Plan plan1;
-    auto const sucess = static_cast<bool>(move_group_interface.plan(plan1)); 
-    
-    if (sucess) {
-      RCLCPP_INFO(logger, "Plan success");
-      RCLCPP_INFO(logger, "position: x: %f, y: %f, z: %f", target_pose.position.x, target_pose.position.y, target_pose.position.z);
-      move_group_interface.execute(plan1);
-      
-    } else {
-      RCLCPP_ERROR(logger, "Plan failed");
-      return;
-    }
-    // Move to home position
-    go_to_home_position();
-}
 
   void go_to_home_position()
   {
-    std::vector<double> home_joints = {0.0, -1.57, 1.57, -1.57, -1.57, -3.14};
+    std::vector<double> home_joints = {0.0, -1.57, 1.57, -1.57, -1.57, 0};
     move_group_interface.setJointValueTarget(home_joints);
     MoveGroupInterface::Plan plan;
     if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS) {

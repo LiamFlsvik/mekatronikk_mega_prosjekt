@@ -33,6 +33,8 @@ public:
     RCLCPP_INFO(logger,"%sRobot Planning Pipeline:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlanningPipelineId().c_str(),COLOR_RESET);
     RCLCPP_INFO(logger,"%sRobot Planning Id:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlannerId().c_str(),COLOR_RESET);
    
+    go_to_home_position({0.0, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
+
     go_to_home_position();
 
     
@@ -43,34 +45,34 @@ public:
   }
 
 void scan_workplace(){
-  //x² + y² = r²
-  //Trajectory radius
-  //parameters
-  const double r = 0.4; //scan radius
-  const double height = 0.3; //initial scan height
-  double scan_depth_offset = height -0.2;
+  const double r = 0.4;
+  const double height = 0.4; //Scan height
+  /*double scan_depth_offset = height -0.15;
   if (scan_depth_offset < 0.0){
     scan_depth_offset = 0.01;
-  }
-  
+  }*/
+  const double num_points = 8;
+  const double angle_increment = (M_PI / num_points);
+  double angle = 0.0;
 
-
-  //Number of points
-  const double num_points = 15;
-  //Angle increment
-  const double angle_increment = 2 * M_PI / num_points;
-  for (int i = 0; i < num_points; ++i) {
-    double angle = i * angle_increment;
+  for (int i = 0; i < num_points*2; ++i) {
+    //Get pose
+    
+    if (i < num_points){
+      angle += angle_increment;
+    } else {
+      angle -= angle_increment;
+    }
     double x = r * cos(angle);
     double y = r * sin(angle);
     move_robot(x,y,height,0,-M_PI,angle);
-    //Move closer to potential objects
-    move_robot(x,y,scan_depth_offset,0,-M_PI,angle);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    //move further away from potential objects
-    move_robot(x,y,scan_depth_offset,0,-M_PI,angle);
-
-  }
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+  
+  go_to_home_position();
+}
+void point_on_object(double x,double y, double z){
+  move_robot(x,y,z,0,-M_PI,0);
 }
 
 void move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
@@ -102,9 +104,11 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
 }
 
 
-  void go_to_home_position()
+
+
+  void go_to_home_position(std::vector<double> home_joints_= {0.0, -1.57, 1.57, -1.57, -1.57, 0})
   {
-    std::vector<double> home_joints = {0.0, -1.57, 1.57, -1.57, -1.57, 0};
+    std::vector<double> home_joints = home_joints_;//= {0.0, -1.57, 1.57, -1.57, -1.57, 0};
     move_group_interface.setJointValueTarget(home_joints);
     MoveGroupInterface::Plan plan;
     if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS) {
@@ -117,6 +121,10 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
   }
 
 private:
+  double box_pick_offset = 0.1;
+  const double box_height = 0.1; //height of the box
+  const double box_width = 0.1; //width of the box
+  const double box_length = 0.1; //length of the box
   std::vector<std::vector<std::pair<double, double>>> poses = {{{0.1, 0.0}, {0.0, 0.1}}, {{-0.1, 0.0}, {0.0, -0.1}}};
   RobotModelLoader robot_model_loader_;
   moveit::core::RobotModelPtr robot_model_;

@@ -16,7 +16,7 @@ class KeyboardInputHandler(Node):
         self.lock = threading.Lock()
         self.emergency_stop = False
 
-        # Define valid keys to monitor
+        #define valid keys to monitor
         self.valid_keys = {
             'w', 's', 'a', 'd', 'q', 'e',
             '<up>', '<down>', '<left>', '<right>',

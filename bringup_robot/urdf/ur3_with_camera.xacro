@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur3_with_camera">
+
+  <!-- Declare all args that ur.urdf.xacro needs -->
+  <xacro:arg name="name" default="ur3"/>
+  <xacro:arg name="ur_type" default="ur3"/>
+  <xacro:arg name="tf_prefix" default=""/>
+  <xacro:arg name="safety_limits" default="true"/>
+  <xacro:arg name="safety_pos_margin" default="0.15"/>
+  <xacro:arg name="safety_k_position" default="20"/>
+  <xacro:arg name="robot_ip" default="0.0.0.0"/>
+  <xacro:arg name="script_filename" default=""/>
+  <xacro:arg name="input_recipe_filename" default=""/>
+  <xacro:arg name="output_recipe_filename" default=""/>
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+  <xacro:arg name="use_tool_communication" default="false"/>
+  <xacro:arg name="tool_voltage" default="0"/>
+  <xacro:arg name="tool_parity" default="0"/>
+  <xacro:arg name="tool_baud_rate" default="115200"/>
+  <xacro:arg name="tool_stop_bits" default="1"/>
+  <xacro:arg name="tool_rx_idle_chars" default="1.5"/>
+  <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
+  <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
+  <xacro:arg name="tool_tcp_port" default="54321"/>
+  <xacro:arg name="reverse_ip" default="0.0.0.0"/>
+  <xacro:arg name="script_command_port" default="50004"/>
+  <xacro:arg name="reverse_port" default="50001"/>
+  <xacro:arg name="script_sender_port" default="50002"/>
+  <xacro:arg name="trajectory_port" default="50003"/>
+  <xacro:arg name="use_mock_hardware" default="true"/>
+  <xacro:arg name="mock_sensor_commands" default="false"/>
+  <xacro:arg name="headless_mode" default="true"/>
+  <xacro:arg name="simulation_controllers" default=""/>
+  <xacro:arg name="initial_positions_file" default="$(find ur_description)/config/initial_positions.yaml"/>
+
+  <!-- Include robot and camera -->
+  <xacro:include filename="$(find ur_robot_driver)/urdf/ur.urdf.xacro"/>
+  <xacro:include filename="$(find bringup_robot)/urdf/camera_model.xacro"/>
+
+  <!-- Attach the camera -->
+  <xacro:add_camera parent_link="wrist_3_link"/>
+
+</robot>

@@ -12,7 +12,8 @@ find_package(moveit_ros_planning_interface REQUIRED)
 
 include_directories(include)
 
-add_executable(robot_controller_node src/main.cpp include/robot_controller.hpp)
+
+add_executable(robot_controller_node src/main.cpp)
 ament_target_dependencies(
   robot_controller_node
   "moveit_ros_planning_interface"
@@ -23,9 +24,14 @@ install(TARGETS
 robot_controller_node
   DESTINATION lib/${PROJECT_NAME}
 )
-
 install(DIRECTORY include
   DESTINATION share/${PROJECT_NAME}
+)
+install(DIRECTORY config/
+  DESTINATION share/${PROJECT_NAME}/config
+)
+install(DIRECTORY launch/
+  DESTINATION share/${PROJECT_NAME}/launch
 )
 
 if(BUILD_TESTING)

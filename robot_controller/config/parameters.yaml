@@ -1,0 +1,12 @@
+robot_controller_node:
+  ros__parameters:
+    planning_pipeline_id: "pilz_industrial_motion_planner"
+    planner_id: "PTP"
+    planning_group: "ur_manipulator"
+    scan_radius: 0.4
+    scan_height: 0.4
+    num_scan_points: 8
+    camera_height: 0.06
+    camera_width: 0.05
+    camera_length: 0.05
+    camera_offset: 0.035

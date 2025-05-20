@@ -11,7 +11,7 @@
 #include <tf2/LinearMath/Quaternion.hpp>
 
 #include <color_logger.hpp>
-
+//TODO: Parameters & service
 using RobotModelLoader = robot_model_loader::RobotModelLoader;
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 
@@ -27,17 +27,16 @@ public:
     move_group_interface(std::shared_ptr<rclcpp::Node>(this), PLANNING_GROUP),
     logger(rclcpp::get_logger("robot_controller_node")){
     
-    
     move_group_interface.setPlanningPipelineId("pilz_industrial_motion_planner");
     move_group_interface.setPlannerId("PTP");
     RCLCPP_INFO(logger,"%sRobot Planning Pipeline:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlanningPipelineId().c_str(),COLOR_RESET);
     RCLCPP_INFO(logger,"%sRobot Planning Id:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlannerId().c_str(),COLOR_RESET);
-   
-    go_to_home_position({0.0, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
 
+    add_camera_collision();
+
+    go_to_home_position({0.0, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
     go_to_home_position();
 
-    
     RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
     scan_workplace();
     
@@ -56,7 +55,7 @@ void scan_workplace(){
   double angle = 0.0;
 
   for (int i = 0; i < num_points*2; ++i) {
-    //Get pose
+    
     
     if (i < num_points){
       angle += angle_increment;
@@ -71,9 +70,7 @@ void scan_workplace(){
   
   go_to_home_position();
 }
-void point_on_object(double x,double y, double z){
-  move_robot(x,y,z,0,-M_PI,0);
-}
+
 
 void move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
   //End effector roll pitch and yaw:
@@ -89,7 +86,6 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
 
     move_group_interface.setPoseTarget(target_pose);
 
-  //Plan
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     auto const sucess = static_cast<bool>(move_group_interface.plan(plan)); 
     if (sucess) {
@@ -102,13 +98,10 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       return;
     }
 }
-
-
-
-
+ 
   void go_to_home_position(std::vector<double> home_joints_= {0.0, -1.57, 1.57, -1.57, -1.57, 0})
   {
-    std::vector<double> home_joints = home_joints_;//= {0.0, -1.57, 1.57, -1.57, -1.57, 0};
+    std::vector<double> home_joints = home_joints_;
     move_group_interface.setJointValueTarget(home_joints);
     MoveGroupInterface::Plan plan;
     if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS) {
@@ -120,11 +113,42 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     }
   }
 
+
+  void add_camera_collision(){
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+  moveit_msgs::msg::CollisionObject collision_object;
+  collision_object.header.frame_id = "tool0"; 
+  collision_object.id = "camera";
+
+  shape_msgs::msg::SolidPrimitive camera;
+  camera.type = shape_msgs::msg::SolidPrimitive::BOX;
+  camera.dimensions = {0.05, 0.05, 0.1};
+
+  geometry_msgs::msg::Pose camera_pose;
+  camera_pose.orientation.w = 1.0;
+  camera_pose.position.x = 0.0;
+  camera_pose.position.y = 0.0;
+  camera_pose.position.z = 0.05;  
+
+  collision_object.primitives.push_back(camera);
+  collision_object.primitive_poses.push_back(camera_pose);
+  collision_object.operation = collision_object.ADD;
+
+  planning_scene_interface.applyCollisionObject(collision_object);
+
+  moveit_msgs::msg::AttachedCollisionObject attached_object;
+  attached_object.link_name = "tool0";
+  attached_object.object = collision_object;
+  attached_object.touch_links = std::vector<std::string>{ "tool0" };  
+
+  planning_scene_interface.applyAttachedCollisionObject(attached_object);
+}
+
 private:
   double box_pick_offset = 0.1;
-  const double box_height = 0.1; //height of the box
-  const double box_width = 0.1; //width of the box
-  const double box_length = 0.1; //length of the box
+  const double box_height = 0.1; 
+  const double box_width = 0.1; 
+  const double box_length = 0.1;
   std::vector<std::vector<std::pair<double, double>>> poses = {{{0.1, 0.0}, {0.0, 0.1}}, {{-0.1, 0.0}, {0.0, -0.1}}};
   RobotModelLoader robot_model_loader_;
   moveit::core::RobotModelPtr robot_model_;

@@ -11,7 +11,7 @@
 #include <tf2/LinearMath/Quaternion.hpp>
 
 #include <color_logger.hpp>
-//TODO: Parameters & service
+//TODO: Service
 using RobotModelLoader = robot_model_loader::RobotModelLoader;
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 
@@ -28,34 +28,7 @@ public:
     logger(rclcpp::get_logger("robot_controller_node")){
     
   //Parameters
-    this->declare_parameter<std::string>("planning_pipeline_id", "pilz_industrial_motion_planner");
-    this->declare_parameter<std::string>("planner_id", "PTP");
-
-    this->declare_parameter<std::string>("planning_group", "ur_manipulator");
-
-    this->declare_parameter<double>("scan_radius", 0.4);
-    scan_radius = this->get_parameter("scan_radius").as_double();
-
-    this->declare_parameter<double>("scan_height", 0.4);
-    scan_height = this->get_parameter("scan_height").as_double();
-
-    this->declare_parameter<int>("num_scan_points", 8);
-    num_scan_points = this->get_parameter("num_scan_points").as_int();
-
-    this->declare_parameter<double>("camera_height", 0.4);
-    camera_height = this->get_parameter("camera_height").as_double();
-
-    this->declare_parameter<double>("camera_width", 0.4);
-    camera_width = this->get_parameter("camera_width").as_double();
-
-    this->declare_parameter<double>("camera_length", 0.4);
-    camera_length = this->get_parameter("camera_length").as_double();
-
-    this->declare_parameter<double>("camera_offset",0.1);
-    camera_offset = this->get_parameter("camera_offset").as_double();
-
-    move_group_interface.setPlanningPipelineId("pilz_industrial_motion_planner");
-    move_group_interface.setPlannerId("PTP");
+    parameter_init();
 
     parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
 
@@ -71,71 +44,13 @@ public:
     scan_workplace();
   }
 
-rcl_interfaces::msg::SetParametersResult on_parameter_change(const std::vector<rclcpp::Parameter> &params)
-{
-  rcl_interfaces::msg::SetParametersResult result;
-  result.successful = true;
-  result.reason = "Parameters updated successfully";
-
-  for (const auto &param : params) {
-    const std::string &name = param.get_name();
-
-    if (name == "planning_pipeline_id") {
-      move_group_interface.setPlanningPipelineId(param.as_string());
-      RCLCPP_INFO(logger, "Updated planning_pipeline_id to: %s", param.as_string().c_str());
-
-    } else if (name == "planner_id") {
-      move_group_interface.setPlannerId(param.as_string());
-      RCLCPP_INFO(logger, "Updated planner_id to: %s", param.as_string().c_str());
-
-    } else if (name == "planning_group") {
-      RCLCPP_WARN(logger, "Changing planning_group dynamically is unsupported at runtime.");
-
-    } else if (name == "scan_radius") {
-      scan_radius = param.as_double();
-      RCLCPP_INFO(logger, "Updated scan_radius to: %f", scan_radius);
-
-    } else if (name == "scan_height") {
-      scan_height = param.as_double();
-      RCLCPP_INFO(logger, "Updated scan_height to: %f", scan_height);
-
-    } else if (name == "num_scan_points") {
-      num_scan_points = param.as_int();
-      RCLCPP_INFO(logger, "Updated num_scan_points to: %f", num_scan_points);
-
-    } else if (name == "camera_height") {
-      camera_height = param.as_double();
-      add_camera_collision();
-      RCLCPP_INFO(logger, "Updated camera_height to: %f", camera_height);
-
-    } else if (name == "camera_width") {
-      camera_width = param.as_double();
-      RCLCPP_INFO(logger, "Updated camera_width to: %f", camera_width);
-      add_camera_collision();
-    } else if (name == "camera_length") {
-      camera_length = param.as_double();
-      add_camera_collision();
-
-      RCLCPP_INFO(logger, "Updated camera_length to: %f", camera_length);
-    } else if (name == "camera_offset") {
-      camera_offset = param.as_double();
-      add_camera_collision();
-
-      RCLCPP_INFO(logger, "Updated camera_offset to: %f", camera_offset);
-    
-    } else {
-      result.successful = false;
-      result.reason = "Unsupported parameter: " + name;
-      RCLCPP_WARN(logger, "Unsupported parameter: %s", name.c_str());
-    }
-  }
-
-  return result;
-}
-
 void scan_workplace(){
+/*
+This code starts at a angle defined in the parameter scan_angle_start and 
+performs a half circle movement in the counter-clockwise and then the clockwise direction.
+*/
   const double angle_increment = (M_PI / num_scan_points);
-  double angle = 0.0;
+  double angle = scan_angle_start;
 
   for (int i = 0; i < round(num_scan_points)*2; ++i) {
     if (i < num_scan_points){
@@ -145,13 +60,15 @@ void scan_workplace(){
     }
     double x = scan_radius * cos(angle);
     double y = scan_radius * sin(angle);
-    move_robot(x,y,scan_height,0,-M_PI,angle);
+
+    move_robot(x,y,scan_height,0,-M_PI,-angle);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
   
   go_to_home_position();
 }
 
+// This code can be called to move the robots endeffector to a desired location with a specified roll, pitch and yaw.
 void move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
   //End effector roll pitch and yaw:
     tf2::Quaternion quat;
@@ -163,9 +80,9 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     target_pose.position.x = x;
     target_pose.position.y = y;
     target_pose.position.z = z;
-
+  //Set pose target
     move_group_interface.setPoseTarget(target_pose);
-
+  //create plan
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     auto const sucess = static_cast<bool>(move_group_interface.plan(plan)); 
     if (sucess) {
@@ -208,7 +125,8 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     camera_pose.orientation.w = 1.0;
     camera_pose.position.x = 0.0;
     camera_pose.position.y = 0.0;
-    camera_pose.position.z = camera_offset;  
+    camera_pose.position.z = camera_offset+ camera_height/2; 
+
 
     collision_object.primitives.push_back(camera);
     collision_object.primitive_poses.push_back(camera_pose);
@@ -222,7 +140,112 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     attached_object.touch_links = std::vector<std::string>{"tool0"};  
 
     planning_scene_interface.applyAttachedCollisionObject(attached_object);
+    
 }
+  void parameter_init(){
+      this->declare_parameter<std::string>("planning_pipeline_id", "pilz_industrial_motion_planner");
+      this->declare_parameter<std::string>("planner_id", "PTP");
+
+      this->declare_parameter<std::string>("planning_group", "ur_manipulator");
+      PLANNING_GROUP = this->get_parameter("planning_group").as_string();
+    //Desired scan radius for the robot 
+      this->declare_parameter<double>("scan_radius", 0.4);
+      scan_radius = this->get_parameter("scan_radius").as_double();
+    //Desired scan height
+      this->declare_parameter<double>("scan_height", 0.4);
+      scan_height = this->get_parameter("scan_height").as_double();
+    //Number of points to move to during each half circle "trajectory"
+      this->declare_parameter<int>("num_scan_points", 8);
+      num_scan_points = this->get_parameter("num_scan_points").as_int();
+
+    //Camera dimensions z
+      this->declare_parameter<double>("camera_height", 0.4);
+      camera_height = this->get_parameter("camera_height").as_double();
+
+    //Camera dimensions x
+      this->declare_parameter<double>("camera_width", 0.4);
+      camera_width = this->get_parameter("camera_width").as_double();
+
+    //Camera dimensions y
+      this->declare_parameter<double>("camera_length", 0.4);
+      camera_length = this->get_parameter("camera_length").as_double();
+
+    //Camera offset from the endeffector, must be greater than 0.0
+      this->declare_parameter<double>("camera_offset",0.0);
+      camera_offset = this->get_parameter("camera_offset").as_double();
+
+    //The initial angle during the scan, 
+      this->declare_parameter<double>("scan_angle_start",0.0);
+      scan_angle_start = this->get_parameter("scan_angle_start").as_double();
+
+      move_group_interface.setPlanningPipelineId("pilz_industrial_motion_planner");
+      move_group_interface.setPlannerId("PTP");
+    }
+    
+    rcl_interfaces::msg::SetParametersResult on_parameter_change(const std::vector<rclcpp::Parameter> &params){
+      rcl_interfaces::msg::SetParametersResult result;
+      result.successful = true;
+      result.reason = "Parameters updated successfully";
+
+      for (const auto &param : params) {
+        const std::string &name = param.get_name();
+
+        if (name == "planning_pipeline_id") {
+          move_group_interface.setPlanningPipelineId(param.as_string());
+          RCLCPP_INFO(logger, "Updated planning_pipeline_id to: %s", param.as_string().c_str());
+
+        } else if (name == "planner_id") {
+          move_group_interface.setPlannerId(param.as_string());
+          RCLCPP_INFO(logger, "Updated planner_id to: %s", param.as_string().c_str());
+
+        } else if (name == "planning_group") {
+          PLANNING_GROUP = this->get_parameter("planning_group").as_string();
+
+          RCLCPP_WARN(logger, "Changing planning_group dynamically is unsupported at runtime.");
+
+        } else if (name == "scan_radius") {
+          scan_radius = param.as_double();
+          RCLCPP_INFO(logger, "Updated scan_radius to: %f", scan_radius);
+
+        } else if (name == "scan_height") {
+          scan_height = param.as_double();
+          RCLCPP_INFO(logger, "Updated scan_height to: %f", scan_height);
+
+        } else if (name == "num_scan_points") {
+          num_scan_points = param.as_int();
+          RCLCPP_INFO(logger, "Updated num_scan_points to: %f", num_scan_points);
+
+        } else if (name == "camera_height") {
+          camera_height = param.as_double();
+          add_camera_collision();
+          RCLCPP_INFO(logger, "Updated camera_height to: %f", camera_height);
+
+        } else if (name == "camera_width") {
+          camera_width = param.as_double();
+          RCLCPP_INFO(logger, "Updated camera_width to: %f", camera_width);
+          add_camera_collision();
+        } else if (name == "camera_length") {
+          camera_length = param.as_double();
+          add_camera_collision();
+
+          RCLCPP_INFO(logger, "Updated camera_length to: %f", camera_length);
+        } else if (name == "camera_offset") {
+          camera_offset = param.as_double();
+          add_camera_collision();
+          RCLCPP_INFO(logger, "Updated camera_offset to: %f", camera_offset);
+        
+        } else if (name == "scan_angle_start") {
+          scan_angle_start = param.as_double();
+          RCLCPP_INFO(logger, "Updated scan_angle_start to: %f", scan_angle_start);
+        }
+        else {
+          result.successful = false;
+          result.reason = "Unsupported parameter: " + name;
+          RCLCPP_WARN(logger, "Unsupported parameter: %s", name.c_str());
+        } 
+      }
+      return result;
+    }
    
 private:
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;
@@ -234,6 +257,7 @@ private:
   double camera_width = 0.04;
   double camera_length = 0.04;
   double camera_offset = 0.01;
+  double scan_angle_start = 0;
 
   std::vector<std::vector<std::pair<double, double>>> poses = {{{0.1, 0.0}, {0.0, 0.1}}, {{-0.1, 0.0}, {0.0, -0.1}}};
   RobotModelLoader robot_model_loader_;

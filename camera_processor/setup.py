@@ -1,6 +1,9 @@
 from setuptools import find_packages, setup
-
+import os
+import sys
 package_name = 'camera_processor'
+if 'VIRTUAL_ENV' in os.environ:
+    sys.executable = os.path.join(os.environ['VIRTUAL_ENV'], 'bin', 'python')
 
 setup(
     name=package_name,
@@ -20,6 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        ],
+    'red_cube_detector = camera_processor.red_cube_detector:main',
+    'cube_tracker = camera_processor.cube_tracker:main',
+],
     },
 )

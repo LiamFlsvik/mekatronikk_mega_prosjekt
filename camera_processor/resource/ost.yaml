@@ -1,0 +1,27 @@
+# This file contains the camera position calibration parameters. Found using a camera calibration process "LINK TO CAMERA CALIBRATION PROCESS"
+image_width: 640
+image_height: 480
+camera_name: narrow_stereo
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [585.20149,   0.     , 359.74242,
+           0.     , 584.03096, 256.50443,
+           0.     ,   0.     ,   1.     ]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0.173910, -0.181651, 0.010147, 0.032039, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1., 0., 0.,
+         0., 1., 0.,
+         0., 0., 1.]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [601.41913,   0.     , 376.02253,   0.     ,
+           0.     , 620.35278, 259.41832,   0.     ,
+           0.     ,   0.     ,   1.     ,   0.     ]

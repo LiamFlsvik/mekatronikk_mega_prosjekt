@@ -7,10 +7,14 @@ from pynput import keyboard
 import threading
 import json
 
+from process_msgs.msg import KeyEvent
+from builtin_interfaces.msg import Time
+from rclpy.time import Time as RclpyTime
+
 class KeyboardInputHandler(Node):
     def __init__(self):
         super().__init__('keyboard_input_handler')
-        self.publisher_ = self.create_publisher(String, '/active_keys', 10)
+        self.publisher_ = self.create_publisher(KeyEvent, '/active_keys', 10)
         
         self.active_keys = set()
         self.lock = threading.Lock()
@@ -52,12 +56,10 @@ class KeyboardInputHandler(Node):
 
     def publish_keys(self):
         with self.lock:
-            msg = String()
-            key_state = {
-                'active_keys': list(self.active_keys),
-                'emergency_stop': self.emergency_stop
-            }
-            msg.data = json.dumps(key_state)
+            msg = KeyEvent()
+            msg.active_keys = list(self.active_keys)
+            msg.emergency_stop = self.emergency_stop
+            msg.stamp = self.get_clock().now().to_msg()
             self.publisher_.publish(msg)
             self.display_status()
 

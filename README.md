@@ -1,33 +1,28 @@
-### About the project
-The project is developed in the engineering course Mechatronics and Robotics at NTNU in Ålesund. The main goal of the project is to learn how to apply the moveit2 framework along with ROS2 in order to control robots.
+# UR-Robot Cube-Handling Pipeline  
+ROS 2 **Jazzy** – communication & integration guide
 
-The order of operations for the robot in the project is as follows:
-* 1. Move the robot to a home position.
-* 2. Perform a scan of the robots enviornment.
-* 3. Locate and identify three cubes of different colors (red, yellow and blue).
-* 4. Reassure that all cubes are found, if not then notify operator and redo the location and identification.
-* 5. Move above the cubes and "point" on them.
+```mermaid
+flowchart LR
+  %% ========================= VISION =========================
+  subgraph Vision
+    CAM[usb_camera] -->|🟢 /camera/image_raw<br><b>sensor_msgs/Image</b>| PROC[camera_processor]
+    PROC -->|🟢 /cubes/detections<br><b>process_msgs/CubeArray</b>| SCENE(scene_handler)
+  end
 
+  %% ========================= LOGIC ==========================
+  subgraph Logic
+    INPUT[input_handler] -->|🟢 /active_keys<br><b>process_msgs/KeyEvent</b>| FSM[process_handler]
+    SCENE -->|🟢 /scene/state<br><b>process_msgs/SceneState</b>| FSM
+    FSM -->|🟢 /task_command<br><b>process_msgs/Task</b>| CTRL[robot_controller]
+    CTRL -->|🟢 /task/feedback<br><b>process_msgs/TaskFeedback</b>| FSM
+  end
 
+  %% ========================= MOTION =========================
+  subgraph Motion
+    CTRL -. ⚫ plan() / execute() .-> MOVEIT[move_group]
+    MOVEIT -->|🟢 /joint_trajectory<br><b>trajectory_msgs/JointTrajectory</b>| UR[ur_driver]
+    CTRL -->|🟢 /joint_states<br><b>sensor_msgs/JointState</b>| SCENE
+  end
 
-### Prerequisites
-Moveit2 must be downloaded, built and sourced. Follow the details on the link below:
-
-> https://moveit.picknik.ai/main/doc/tutorials/getting_started/getting_started.html#create-a-colcon-workspace-and-download-tutorials
-
-Furthermore the Universal Robot ROS2 Driver must be setup. See the link below for instructions:
-
-> https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/main
-
-
-
-
-
-
-
-
-
-
-
-
-
+  %% ========================= SERVICES ========================
+  FSM -->|"🔵 GetScene (service)\nSceneState"| SCENE

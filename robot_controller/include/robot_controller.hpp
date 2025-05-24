@@ -9,7 +9,6 @@
 #include <moveit/move_group_interface/move_group_interface.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2/LinearMath/Quaternion.hpp>
-
 #include <color_logger.hpp>
 //TODO: Service
 using RobotModelLoader = robot_model_loader::RobotModelLoader;
@@ -32,6 +31,10 @@ public:
 
     parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
 
+  //publish to joint states
+    joint_state_publisher = this->create_publisher<sensor_msgs::msg::JointState>("current_joint_angles", 10);
+    timer_ = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&robot_controller::publishJointStates, this));
+
     RCLCPP_INFO(logger,"%sRobot Planning Pipeline:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlanningPipelineId().c_str(),COLOR_RESET);
     RCLCPP_INFO(logger,"%sRobot Planning Id:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlannerId().c_str(),COLOR_RESET);
 
@@ -42,6 +45,7 @@ public:
 
     RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
     scan_workplace();
+    go_to_home_position();
   }
 
 void scan_workplace(){
@@ -64,8 +68,6 @@ performs a half circle movement in the counter-clockwise and then the clockwise 
     move_robot(x,y,scan_height,0,-M_PI,-angle);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-  
-  go_to_home_position();
 }
 
 // This code can be called to move the robots endeffector to a desired location with a specified roll, pitch and yaw.
@@ -124,7 +126,7 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     geometry_msgs::msg::Pose camera_pose;
     camera_pose.orientation.w = 1.0;
     camera_pose.position.x = 0.0;
-    camera_pose.position.y = 0.0;
+    camera_pose.position.y = -camera_offset_width;//camera_width/4;
     camera_pose.position.z = camera_offset+ camera_height/2; 
 
 
@@ -173,6 +175,9 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     //Camera offset from the endeffector, must be greater than 0.0
       this->declare_parameter<double>("camera_offset",0.0);
       camera_offset = this->get_parameter("camera_offset").as_double();
+
+      this->declare_parameter<double>("camera_offset_width", 0.0);
+      camera_offset_width = this->get_parameter("camera_offset_width").as_double();
 
     //The initial angle during the scan, 
       this->declare_parameter<double>("scan_angle_start",0.0);
@@ -246,6 +251,15 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       }
       return result;
     }
+
+    void publishJointStates(){
+      sensor_msgs::msg::JointState msg;
+      msg.name = move_group_interface.getJointNames();
+      msg.position = move_group_interface.getCurrentJointValues();
+      msg.header.stamp = this->now();
+      joint_state_publisher->publish(msg);
+      RCLCPP_INFO(logger, "Published joint states: %s", msg.name[0].c_str());
+    }
    
 private:
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;
@@ -258,7 +272,8 @@ private:
   double camera_length = 0.04;
   double camera_offset = 0.01;
   double scan_angle_start = 0;
-
+  double camera_offset_width = 0.0;
+  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher;
   std::vector<std::vector<std::pair<double, double>>> poses = {{{0.1, 0.0}, {0.0, 0.1}}, {{-0.1, 0.0}, {0.0, -0.1}}};
   RobotModelLoader robot_model_loader_;
   moveit::core::RobotModelPtr robot_model_;
@@ -270,6 +285,7 @@ private:
   rclcpp::TimerBase::SharedPtr startup_timer_;
   rclcpp::Logger logger;
   tf2::Quaternion quat;
+  rclcpp::TimerBase::SharedPtr timer_;
   
 };
 

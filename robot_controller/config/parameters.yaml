@@ -6,8 +6,10 @@ robot_controller_node:
     scan_radius: 0.4
     scan_height: 0.4
     num_scan_points: 8
-    camera_height: 0.1
-    camera_width: 0.09
+    camera_height: 0.119
+    camera_width: 0.135
     camera_length: 0.09
-    camera_offset: 0.00
+    camera_offset_height: 0.00
+    camera_offset_width: 0.03375 
     scan_angle_start: 0.0
+    

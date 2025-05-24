@@ -18,15 +18,13 @@ class KeyboardInputHandler(Node):
         
         self.active_keys = set()
         self.lock = threading.Lock()
-        self.emergency_stop = False
 
         #define valid keys to monitor
         self.valid_keys = {
-            'w', 's', 'a', 'd', 'q', 'e',
-            '<up>', '<down>', '<left>', '<right>',
-            '<page_up>', '<page_down>', '<space>'
+            'w',
+            'space',
+            'enter'
         }
-
         self.timer = self.create_timer(0.05, self.publish_keys)
         self.keyboard_listener = keyboard.Listener(
             on_press=self.on_press,
@@ -34,16 +32,14 @@ class KeyboardInputHandler(Node):
         )
         self.keyboard_listener.start()
 
-    def on_press(self, key):
-        try:
-            with self.lock:
-                key_str = key.char if hasattr(key, 'char') else f'<{key._name_}>'
-                if key_str in self.valid_keys:
-                    self.active_keys.add(key_str)
-                    if key_str == '<space>':
-                        self.emergency_stop = True
-        except AttributeError:
-            pass
+        def on_press(self, key):
+            try:
+                with self.lock:
+                    key_str = key.char if hasattr(key, 'char') else f'<{key._name_}>'
+                    if key_str in self.valid_keys:
+                        self.active_keys.add(key_str)
+            except AttributeError:
+                pass
 
     def on_release(self, key):
         try:
@@ -58,7 +54,6 @@ class KeyboardInputHandler(Node):
         with self.lock:
             msg = KeyEvent()
             msg.active_keys = list(self.active_keys)
-            msg.emergency_stop = self.emergency_stop
             msg.stamp = self.get_clock().now().to_msg()
             self.publisher_.publish(msg)
             self.display_status()
@@ -66,7 +61,6 @@ class KeyboardInputHandler(Node):
     def display_status(self):
         status = f"""
         Active Keys: {self.active_keys}
-        Emergency Stop: {'ACTIVE' if self.emergency_stop else 'inactive'}
         """
         print("\033[2J\033[H")
         print(status)

@@ -15,7 +15,7 @@ from cv_bridge import CvBridge
 from process_msgs.msg import Cube, CubeArray
 
 class CubeTracker(Node):
-    """Cube tracker node: detects colored cubes and publishes a CubeArray."""
+    """Cube tracker node: detects HSV values the colored cubes and publishes a CubeArray."""
 
     def __init__(self):
         super().__init__('cube_tracker')
@@ -34,12 +34,26 @@ class CubeTracker(Node):
         self.bridge = CvBridge()
         self.color_finder = ColorFinder(False)
 
-        # HSV color ranges (lights on)
-        self.color_ranges = {
-            'red':    {'hmin': 0,  'smin': 57,  'vmin': 243, 'hmax': 12,  'smax': 135, 'vmax': 255},
-            'blue':   {'hmin': 93, 'smin': 184, 'vmin': 200, 'hmax': 108, 'smax': 222, 'vmax': 255},
-            # 'yellow': {...},  # enable if needed
-            'green':  {'hmin': 31, 'smin': 29,  'vmin': 139, 'hmax': 78,  'smax': 109, 'vmax': 244},
+
+        #self.color_ranges = { # Define HSV color ranges for different cubes (Lights on)
+        #    'red':    {'hmin': 0,  'smin': 57,  'vmin': 243, 'hmax': 12,  'smax': 135, 'vmax': 255},
+        #    'blue':   {'hmin': 93, 'smin': 184, 'vmin': 200, 'hmax': 108, 'smax': 222, 'vmax': 255},
+        #    'yellow': {'hmin': 9, 'smin': 103, 'vmin': 101, 'hmax': 28, 'smax': 176, 'vmax': 239},  # enable if needed
+        #    'green':  {'hmin': 31, 'smin': 29,  'vmin': 139, 'hmax': 78,  'smax': 109, 'vmax': 244},
+        #}
+
+        #self.color_ranges = { # Define HSV color ranges for different cubes (Lights off)
+        #    'red':   {'hmin': 134, 'smin': 131, 'vmin': 0, 'hmax': 179, 'smax': 186, 'vmax': 255},
+        #    'blue':  {'hmin': 102, 'smin': 164, 'vmin': 124, 'hmax': 165, 'smax': 244, 'vmax': 255},
+        #    'yellow': {'hmin': 9, 'smin': 103, 'vmin': 101, 'hmax': 28, 'smax': 176, 'vmax': 239},
+        #    'green': {'hmin': 48, 'smin': 64, 'vmin': 53, 'hmax': 91, 'smax': 117, 'vmax': 107},
+        #}
+
+        self.color_ranges = { # Define HSV color ranges for different cubes (Semi controlled lighting)
+            'red':   {'hmin': 35, 'smin': 4, 'vmin': 255, 'hmax': 179, 'smax': 241, 'vmax': 255},
+            'blue':  {'hmin': 100, 'smin': 102, 'vmin': 90, 'hmax': 114, 'smax': 224, 'vmax': 255},
+            'yellow': {'hmin': 14, 'smin': 55, 'vmin': 164, 'hmax': 42, 'smax': 194, 'vmax': 255},
+            'green': {'hmin': 37, 'smin': 82, 'vmin': 86, 'hmax': 82, 'smax': 157, 'vmax': 170},
         }
 
         # Logging
@@ -70,7 +84,7 @@ class CubeTracker(Node):
 
             # Draw for debug
             box = cv2.boxPoints(rect).astype(int)
-            color_bgr = {'red': (0,0,255), 'blue': (255,0,0), 'green': (0,255,0)}
+            color_bgr = {'red': (0,0,255), 'blue': (255,0,0), 'green': (0,255,0), 'yellow': (0,255,255)}
             cv2.drawContours(img, [box], 0, color_bgr[color], 2)
             cv2.putText(img, color.upper(), (int(cx_box), int(cy_box)-10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, color_bgr[color], 2)

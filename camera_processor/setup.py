@@ -20,7 +20,6 @@ setup(
     maintainer_email='liam.folsviks@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
     'red_cube_detector = camera_processor.red_cube_detector:main',

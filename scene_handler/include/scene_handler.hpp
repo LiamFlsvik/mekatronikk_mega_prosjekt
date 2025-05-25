@@ -7,34 +7,73 @@
 #include <shape_msgs/msg/solid_primitive.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2/LinearMath/Quaternion.hpp>
-
+#include "matrix_transformations.hpp"
 
 using moveit::planning_interface::MoveGroupInterface;
 using moveit::planning_interface::PlanningSceneInterface;
 using moveit_msgs::msg::CollisionObject;
-
 //TODO: Parameter service
 class scene_handler: public rclcpp::Node{
   public:
   scene_handler(): 
   rclcpp::Node("scene_handler_node"), 
   move_group_interface(std::shared_ptr<rclcpp::Node>(this),"ur_manipulator"),
-  planning_scene_interface(){
+  planning_scene_interface(),
+  matrix_transformations_(),
+  joint_values({0.0, 0.0, 0.0, 0.0, 0.0, 0.0}) {
+
+    
+
+  joint_state_subscriber = this->create_subscription<sensor_msgs::msg::JointState>(
+      "joint_states",
+      rclcpp::SensorDataQoS(),
+      std::bind(&scene_handler::update_joint_states, this, std::placeholders::_1));
+    
+
+
+  planning_scene_diff_publisher = this->create_publisher<moveit_msgs::msg::PlanningScene>("planning_scene", 10);
+  //remove collision objects
+
 
   create_safe_zone();
-    
+  
+  //Test transformations:
+
+  
+  
+
+  add_collision_object("red box", 0.2, 0.4, 0.0, M_PI/4, box_size_x, box_size_y, box_size_z, object_color("red"));
+  add_collision_object("green box", 0.2, 0.6, 0.0, M_PI*1.2, box_size_x, box_size_y, box_size_z, object_color("green"));
+  
+
+  //Joint states:
+  
   }
 
+
+  void update_joint_states(sensor_msgs::msg::JointState::SharedPtr msg) {
+    // Update the joint states in the MoveGroupInterface
+    joint_values = msg->position;
+    RCLCPP_INFO(this->get_logger(), "Updated joint states from topic: Joint 1:%f, Joint 2:%f, Joint 3:%f, Joint 4:%f, Joint 5:%f, Joint 6:%f",
+                                                                      joint_values[0], joint_values[1], joint_values[2], joint_values[3], joint_values[4], joint_values[5]);
+    std::vector<double> test_box = matrix_transformations_.calculate_box_position(joint_values,{0, 0});
+      remove_collision_object("blue box" + std::to_string(object_counter-1));
+      add_collision_object("blue box", test_box[0], test_box[1], 0, M_PI/3, box_size_x, box_size_y, box_size_z, object_color("blue"));
+  }
+
+  
+
   void create_safe_zone(){
-    /*arbeidsområde målinger:
-      base:
+    /*Workspace measurments:
+      base_plate:
         x 45cm y25cm z1.5cm
-      område
-        x 85cm y 80cm z */
-    //Add robot base plate
-    add_collision_object("Robot base plate",0.0,0.0,-0.015,0.0,0.45,0.25,0.015);
-    add_collision_object("Working scene", 0.0, 0.25, -working_table_z-0.015, 0.0, working_table_x, working_table_y, working_table_z);
-    //TODO: add safe zones
+      Table (smaller than the actual):
+        x 85cm y 80cm z 
+    */
+
+  //Security zones:
+    add_collision_object("Robot base plate",0.0,0.0,-0.015,0.0,0.45,0.25,0.015, object_color("grey"));
+    add_collision_object("Working scene", 0.0, 0.25, -working_table_z-0.015, 0.0, working_table_x, working_table_y, working_table_z, object_color("grey"));
   }
 
   void add_box(std::string name, double position_x, double position_y, double position_z, double yaw){
@@ -84,7 +123,7 @@ class scene_handler: public rclcpp::Node{
   }
 
   void add_collision_object(std::string object_name, double position_x, double position_y, double position_z,double yaw = 0.0, double box_size_x = 0.1, double box_size_y = 0.1, double box_size_z = 0.2, std_msgs::msg::ColorRGBA color = object_color("green")) {
-    
+
     moveit_msgs::msg::CollisionObject collision_object; 
     collision_object.header.frame_id = move_group_interface.getPlanningFrame();
     collision_object.id = object_name + std::to_string(object_counter);
@@ -96,8 +135,13 @@ class scene_handler: public rclcpp::Node{
     primitive.dimensions[primitive.BOX_Y] = box_size_y;
     primitive.dimensions[primitive.BOX_Z] = box_size_z;
 
+
+    tf2::Quaternion quat;
+    quat.setRPY(0, 0, yaw);
+    geometry_msgs::msg::Quaternion msg_quat = tf2::toMsg(quat);
     geometry_msgs::msg::Pose box_pose;
-    box_pose.orientation.w = 1.0;
+    box_pose.orientation = msg_quat;
+
     box_pose.position.x = position_x;
     box_pose.position.y = position_y;
     box_pose.position.z = position_z;
@@ -107,10 +151,19 @@ class scene_handler: public rclcpp::Node{
     collision_object.operation = collision_object.ADD;
 
     planning_scene_interface.applyCollisionObjects({collision_object});
-    object_counter++;
 
     RCLCPP_INFO(this->get_logger(), "Added collision object: %s", object_name.c_str());
     RCLCPP_INFO(this->get_logger(), "Object counter: %d", object_counter);
+
+    moveit_msgs::msg::ObjectColor object_color_msg;
+    object_color_msg.id = collision_object.id;
+    object_color_msg.color = color;
+
+    moveit_msgs::msg::PlanningScene planning_scene_msg;
+    planning_scene_msg.is_diff = true;
+    planning_scene_msg.object_colors.push_back(object_color_msg);
+    planning_scene_diff_publisher->publish(planning_scene_msg);
+    object_counter++;
   }
 
   void remove_collision_object(const std::string& object_name) {
@@ -119,9 +172,9 @@ class scene_handler: public rclcpp::Node{
 }
 
   private:
-  double box_size_x = 0.1;
-  double box_size_y = 0.1;
-  double box_size_z = 0.1;
+  double box_size_x = 0.05;
+  double box_size_y = 0.05;
+  double box_size_z = 0.05;
   double working_table_x = 0.85;
   double working_table_y = 0.80;
   double working_table_z = 0.01;
@@ -129,9 +182,15 @@ class scene_handler: public rclcpp::Node{
   int object_counter = 0;
 
   MoveGroupInterface move_group_interface;
+  std::vector<double> joint_values;
   PlanningSceneInterface planning_scene_interface;
+  rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_diff_publisher;
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscriber;
+
+  matrix_transformations matrix_transformations_;
+
   CollisionObject collision_object;
-  tf2::Quaternion quat;
-  geometry_msgs::msg::Quaternion msg_quat;
+ 
+
 
 };

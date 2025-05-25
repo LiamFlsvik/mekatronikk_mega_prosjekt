@@ -31,21 +31,21 @@ public:
 
     parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
 
+
   //publish to joint states
-    joint_state_publisher = this->create_publisher<sensor_msgs::msg::JointState>("current_joint_angles", 10);
-    timer_ = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&robot_controller::publishJointStates, this));
+    //joint_state_publisher = this->create_publisher<sensor_msgs::msg::JointState>("current_joint_angles", 10);
+    //timer_ = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&robot_controller::publishJointStates, this));
 
     RCLCPP_INFO(logger,"%sRobot Planning Pipeline:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlanningPipelineId().c_str(),COLOR_RESET);
     RCLCPP_INFO(logger,"%sRobot Planning Id:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlannerId().c_str(),COLOR_RESET);
 
     add_camera_collision();
 
-    go_to_home_position({0.0, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
     go_to_home_position();
 
     RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
     scan_workplace();
-    go_to_home_position();
+    //go_to_home_position({-M_PI/2, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
   }
 
 void scan_workplace(){
@@ -96,9 +96,9 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       RCLCPP_ERROR(logger, "Plan failed");
       return;
     }
-}
+  }
  
-  void go_to_home_position(std::vector<double> home_joints_= {0.0, -1.57, 1.57, -1.57, -1.57, 0})
+  void go_to_home_position(std::vector<double> home_joints_= {1.57, -1.57, 1.57, -1.57, -1.57, 0})
   {
     std::vector<double> home_joints = home_joints_;
     move_group_interface.setJointValueTarget(home_joints);
@@ -142,7 +142,6 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     attached_object.touch_links = std::vector<std::string>{"tool0"};  
 
     planning_scene_interface.applyAttachedCollisionObject(attached_object);
-    
 }
   void parameter_init(){
       this->declare_parameter<std::string>("planning_pipeline_id", "pilz_industrial_motion_planner");

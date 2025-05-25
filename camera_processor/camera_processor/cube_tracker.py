@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import time
-import num
+import numpy as np
+import cv2
+import cvzone
+from cvzone.ColorModule import ColorFinder
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
@@ -24,11 +27,7 @@ class CubeTracker(Node):
         # Single publisher for all cube detections
         self.pub_cubes = self.create_publisher(CubeArray,
                                                '/cubes/detections',
-                    py as np
-import cv2
-import cvzone
-from cvzone.ColorModule import ColorFinder
-                           10)
+                                               10)
 
         # CV setup
         self.bridge = CvBridge()

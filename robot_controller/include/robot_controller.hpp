@@ -42,9 +42,10 @@ public:
     add_camera_collision();
 
     go_to_home_position();
+    move_group_interface.setStartStateToCurrentState();
 
     RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
-    scan_workplace();
+    //scan_workplace();
     //go_to_home_position({-M_PI/2, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
   }
 
@@ -67,6 +68,7 @@ performs a half circle movement in the counter-clockwise and then the clockwise 
 
     move_robot(x,y,scan_height,0,-M_PI,-angle);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    move_group_interface.setStartStateToCurrentState();
     }
 }
 

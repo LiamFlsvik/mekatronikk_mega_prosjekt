@@ -10,9 +10,11 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(moveit_visual_tools REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
-find_package (Eigen3 3.3 REQUIRED)
+find_package(Eigen3 3.3 REQUIRED)
+find_package(OpenCV REQUIRED)
+
 include_directories(include)
-  
+
 
 add_executable(scene_handler_node src/main.cpp include/scene_handler.hpp)
 
@@ -31,6 +33,11 @@ install(TARGETS scene_handler_node
 install(DIRECTORY include
   DESTINATION share/${PROJECT_NAME}
 )
+
+target_link_libraries(scene_handler_node
+  ${OpenCV_LIBS}
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

@@ -13,12 +13,9 @@ class matrix_transformations {
                                                             0.0,           0.0,          1.0);
 
         distortion_coefficients = (cv::Mat_<double>(1,5) << 0.173910, -0.181651, 0.010147, 0.032039, 0.0);
-
     } 
     
     public:
-
-  
     // Camera pixel coordinates to base coordinates:
     Eigen::Matrix <double,3,1> pixel_to_camera_coordinates(const std::vector<double>& pixel_coordinates, double depth_ = 0.3) {
         

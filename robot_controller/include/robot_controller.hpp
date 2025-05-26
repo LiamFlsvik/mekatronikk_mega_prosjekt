@@ -301,7 +301,7 @@ private:
         feedback.message = feedback.success ? "Scan completed" : "Scan failed";
       }
       else if(msg->command == "POINT") {
-        feedback.success = point_to_cubes();
+        feedback.success = scan_workplace();
         feedback.message = feedback.success ? "Pointing completed" : "Pointing failed";
       }
       else {

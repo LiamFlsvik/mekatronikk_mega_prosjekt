@@ -1,0 +1,8 @@
+scene_handler_node:
+  ros__parameters:
+    box_size_x: 0.05
+    box_size_y: 0.05
+    box_size_z: 0.05
+    camera_x_offset: -0.025
+    camera_y_offset: 0.12
+    

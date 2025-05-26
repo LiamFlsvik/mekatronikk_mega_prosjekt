@@ -132,7 +132,6 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     camera_pose.position.y = -camera_offset_width;//camera_width/4;
     camera_pose.position.z = camera_offset+ camera_height/2; 
 
-
     collision_object.primitives.push_back(camera);
     collision_object.primitive_poses.push_back(camera_pose);
     collision_object.operation = collision_object.ADD;
@@ -275,7 +274,6 @@ private:
   double camera_offset = 0.01;
   double scan_angle_start = 0;
   double camera_offset_width = 0.0;
-  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher;
   std::vector<std::vector<std::pair<double, double>>> poses = {{{0.1, 0.0}, {0.0, 0.1}}, {{-0.1, 0.0}, {0.0, -0.1}}};
   RobotModelLoader robot_model_loader_;
   moveit::core::RobotModelPtr robot_model_;
@@ -288,6 +286,8 @@ private:
   rclcpp::Logger logger;
   tf2::Quaternion quat;
   rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher;
+
   
 };
 

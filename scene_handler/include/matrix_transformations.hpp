@@ -7,7 +7,6 @@ class matrix_transformations {
     public:
 
     matrix_transformations(){
-
         camera_parameter_matrix = (cv::Mat_<double>(3,3) << -530.47292,    0.0,         357.1054,
                                                             0.0,           530.51882,  258.43042,
                                                             0.0,           0.0,          1.0);
@@ -15,7 +14,6 @@ class matrix_transformations {
         distortion_coefficients = (cv::Mat_<double>(1,5) << 0.073635, -0.121473, -0.000465, 0.015358, 0.00);
     } 
     
-    public:
     // Camera pixel coordinates to base coordinates:
     Eigen::Matrix <double,3,1> pixel_to_camera_coordinates(const std::vector<double>& pixel_coordinates) {
         std::vector<cv::Point2d> distored_points;
@@ -26,16 +24,17 @@ class matrix_transformations {
         cv::undistortPoints(distored_points, undistorted_points, camera_parameter_matrix, distortion_coefficients);
 
         //Normalized camera coordinates:
-        double x =  -0.025+undistorted_points[0].x * depth;
-        double y =  0.12  + undistorted_points[0].y * depth;
-        double z = depth;
+        double x =  camera_x_offset + undistorted_points[0].x * depth;
+        double y =  camera_y_offset + undistorted_points[0].y * depth;
+        double z =  depth;
         
         return Eigen::Vector3d(x, y, z);
     }
 
 
     std::vector<double> base_T_pixel(const std::vector<double>& pixel_coordinates) {
-        // 1) Build base->tool from stored pose (x,y,z,yaw)
+        
+        //Tool to base transform
         double yaw = orientation[2];
         Eigen::Matrix<double,4,4> base_T_tool;
         base_T_tool <<
@@ -44,17 +43,16 @@ class matrix_transformations {
                 0.0,            0.0,    1.0, position[2],
                 0.0,            0.0,    0.0,          1.0;
 
-        // 2) Tool->camera via DH (d=0.1, a=0.08)
+        
         Eigen::Matrix<double,4,4> tool_T_camera = calculate_DHMatrix(0.1, 0.0, 0.08, 0.0);
-
-        // 3) Chain to get base->camera
+        //Camera to base
         Eigen::Matrix<double,4,4> base_T_camera = base_T_tool * tool_T_camera;
 
-        // 4) Back-project pixel into camera frame
+        //Pixel to camera frame
         Eigen::Vector3d p_camera = pixel_to_camera_coordinates(pixel_coordinates);
         Eigen::Vector4d p_camera_homogene{p_camera.x(), p_camera.y(), p_camera.z(), 1.0};
 
-        // 5) Transform to world
+        //Transform to world
         Eigen::Vector4d world_h = base_T_camera * p_camera_homogene;
 
         return {world_h.x(), world_h.y(), world_h.z()};
@@ -70,6 +68,7 @@ class matrix_transformations {
                     0, 0, 0, 1; 
         return tr_matrix;
     }
+    public:
     //Orientation in [rad]
     void set_orientation(double roll, double pitch, double yaw) {
         orientation = {roll, pitch, yaw};
@@ -77,16 +76,23 @@ class matrix_transformations {
     //Position in [m]
     void set_position(double x, double y, double z) {
         position = {x, y, z};
-        depth = -z-0.1;
+        depth = -z;
     }
-
+    void set_camera_offset_x(double x_offset) {
+        camera_x_offset = x_offset;
+    }
+    void set_camera_offset_y(double y_offset) {
+        camera_y_offset = y_offset;
+    }
+    private:
     cv::Mat camera_parameter_matrix;
-    double c_x = 0.0;
-    double c_y = 0.0;
+    double camera_x_offset = -0.025;
+    double camera_y_offset = 0.12;
     double depth = 0.3;
     std::vector<double> joint_angles = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     std::vector<double> endeeffector_position = {0.0, 0.0, 0.0};
     cv::Mat distortion_coefficients;
     std::vector<double> position;
     std::vector<double> orientation;
+
 };

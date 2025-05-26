@@ -1,7 +1,7 @@
 #include<rclcpp/rclcpp.hpp>
 #include<scene_handler.hpp>
-#include <rclcpp/executors/multi_threaded_executor.hpp> 
-/*
+//#include <rclcpp/executors/multi_threaded_executor.hpp> 
+
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
@@ -11,7 +11,9 @@ int main(int argc, char** argv)
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
-}*/
+}
+
+/*
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<scene_handler>();
@@ -20,4 +22,4 @@ int main(int argc, char** argv) {
   exec.spin();
   rclcpp::shutdown();
   return 0;
-}
+}*/

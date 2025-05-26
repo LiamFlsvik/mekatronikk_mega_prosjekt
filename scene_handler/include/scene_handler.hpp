@@ -84,30 +84,35 @@ class scene_handler: public rclcpp::Node{
 
   void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
     auto cubes = msg->cubes;
-    int i = 0;
-    if(scan_activated){
-      for (const auto& cube : cubes) {
-          auto cube_coordinates = matrix_transformations_.base_T_pixel({cube.position.x, cube.position.y});
-          if (cube.color == "red") {
+    for (const auto& cube : cubes) {
+        // Ensure base_T_pixel is returning valid coordinates
+        auto cube_coordinates = matrix_transformations_.base_T_pixel({cube.position.x, cube.position.y});
+        
+        if (cube_coordinates.size() == 0) {
+            // Check if cube_coordinates is empty
+            RCLCPP_WARN(this->get_logger(), "Invalid coordinates for cube color: %s", cube.color.c_str());
+            continue; // Skip this cube if the coordinates are invalid
+        }
+        
+        if (cube.color == "red") {
             remove_collision_object("red");
-            add_box("red",    {cube_coordinates[0], cube_coordinates[1],   0}, 0.0);
-          } else if (cube.color == "blue") {
+            add_box("red",    {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
+        } else if (cube.color == "blue") {
+            
             remove_collision_object("blue");
-            add_box("blue",   {cube_coordinates[0], cube_coordinates[1],  0}, 0.0);
-          } else if (cube.color == "green") {
+            add_box("blue",   {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
+        } else if (cube.color == "green") {
             remove_collision_object("green");
             add_box("green",  {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
-          } else if (cube.color == "yellow") {
+        } else if (cube.color == "yellow") {
             remove_collision_object("yellow");
-            add_box("yellow", {cube_coordinates[0], cube_coordinates[1],0}, 0.0);
-          } else {
+            add_box("yellow", {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
+        } else {
             RCLCPP_WARN(this->get_logger(), "Unknown color: %s", cube.color.c_str());
-          }
-
-          i +=1;
-      } 
-  }
+        }
+    }
 }
+
   void create_safe_zone(){
     add_collision_object("Robot base plate",{0.0,0.0,-0.015}, 0.0, {0.45, 0.25,0.015},"grey");
     add_collision_object("Working scene",{0.0, 0.25, -working_table_z-0.015}, 0.0,{working_table_x, working_table_y, working_table_z}, "grey");
@@ -218,6 +223,7 @@ class scene_handler: public rclcpp::Node{
           box_size_x = param.as_double();
           RCLCPP_INFO(this->get_logger(), "Box size x set to: %s", param.as_string().c_str());
         } else if (name == "box_size_y") {
+          if()
           box_size_y = param.as_double();
           RCLCPP_INFO(this->get_logger(), "Box size y set to: %s", param.as_string().c_str());
         } else if(name == "box_size_z"){
@@ -255,7 +261,6 @@ class scene_handler: public rclcpp::Node{
 
     MoveGroupInterface move_group_interface;
     PlanningSceneInterface planning_scene_interface;
-    bool scan_activated = true;
     rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_diff_publisher;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscriber;
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;

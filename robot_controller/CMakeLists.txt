@@ -9,15 +9,16 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
+find_package(process_msgs REQUIRED)
 
 include_directories(include)
-
 
 add_executable(robot_controller_node src/main.cpp)
 ament_target_dependencies(
   robot_controller_node
   "moveit_ros_planning_interface"
   "rclcpp"
+  process_msgs
 )
 
 install(TARGETS
@@ -32,7 +33,9 @@ install(DIRECTORY config/
 )
 install(DIRECTORY launch/
   DESTINATION share/${PROJECT_NAME}/launch
-)
+) 
+
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

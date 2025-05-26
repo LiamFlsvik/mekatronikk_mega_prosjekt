@@ -90,7 +90,6 @@ performs a half circle movement in the counter-clockwise and then the clockwise 
     }
   return true;
 }
-
 // This code can be called to move the robots endeffector to a desired location with a specified roll, pitch and yaw.
 bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
   //End effector roll pitch and yaw:
@@ -136,7 +135,6 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
           return false;
       }
   }
-  
 
   void add_camera_collision(){
     moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
@@ -290,7 +288,7 @@ private:
   void handle_task(const process_msgs::msg::Task::SharedPtr msg) {
     process_msgs::msg::TaskFeedback feedback;
     feedback.command = msg->command;
-    
+
     try {
       if(msg->command == "MOVE_HOME") {
         feedback.success = go_to_home_position();
@@ -316,7 +314,7 @@ private:
     feedback_pub_->publish(feedback);
   }
 
-  bool point_to_cubes() {
+ /* bool point_to_cubes() {
     if(!last_scene_ || last_scene_->cubes.empty()) {
       RCLCPP_WARN(logger, "No cubes to point at");
       return false;
@@ -331,7 +329,7 @@ private:
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     return true;
-  }
+  }*/
    
 private:
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;

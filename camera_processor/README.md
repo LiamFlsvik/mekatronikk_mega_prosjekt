@@ -44,7 +44,7 @@ Run the following command and calibrate the camera with a chess board pattern A4
 LINK to a more in depth calibration tutorial: https://docs.ros.org/en/ros2_packages/rolling/api/camera_calibration/doc/tutorial_mono.html
 
 ```bash
-ros2 run camera_calibration cameracalibrator --size 9x7 --square 0.02 image:=/camera/image_raw camera:=/camera --no-service-check
+ros2 run camera_calibration cameracalibrator --size 8x6 --square 0.025 image:=/camera/image_raw camera:=/camera --no-service-check
 ```
 
 > The saved calibration data will then have to be moved to `/resource/ost.yaml`.
@@ -90,7 +90,7 @@ v4l2-ctl --list-devices
 cd ~/ros2_ws/mega_prosjekt
 source /opt/ros/jazzy/setup.bash
 source ~/ros2_ws/.venv/bin/activate
-colcon build --packages-select camera_processor
+colcon build --packages-select camera_processor process_msgs
 source install/setup.bash
 ros2 run camera_processor cube_tracker
 ```
@@ -110,3 +110,17 @@ ros2 run camera_processor cube_tracker
 | `/cubes/detections`     | `process_msgs/CubeArray` | Full data per cube (position, color, rotation, size)         |
 
 ---
+
+cd ~/ros2_ws
+colcon build --packages-select camera_processor
+source install/setup.bash
+ros2 launch camera_processor camera_tracking.launch.py
+
+
+colcon build --packages-select camera_processor
+source install/setup.bash
+ros2 launch camera_processor camera_tracking.launch.py
+
+colcon build --packages-select process_msgs
+source install/setup.bash
+ros2 topic echo /cubes/detections

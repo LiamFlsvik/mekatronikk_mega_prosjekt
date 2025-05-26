@@ -1,0 +1,341 @@
+[0.152s] DEBUG:colcon:Command line arguments: ['/home/michael/ros2_ws/.venv/bin/colcon', 'build']
+[0.152s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=16, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7d7bbaa850d0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7d7bbaa84e60>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7d7bbaa84e60>>)
+[0.196s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.197s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.197s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.197s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.197s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.197s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.197s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt'
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extensions ['ignore', 'ignore_ament_install']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extension 'ignore'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extension 'ignore_ament_install'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extensions ['colcon_pkg']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extension 'colcon_pkg'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extensions ['colcon_meta']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extension 'colcon_meta'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extensions ['ros']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(bringup_robot) by extension 'ros'
+[0.233s] DEBUG:colcon.colcon_core.package_identification:Package 'bringup_robot' with type 'ros.ament_python' and name 'bringup_robot'
+[0.233s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extensions ['ignore', 'ignore_ament_install']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extension 'ignore'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extension 'ignore_ament_install'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extensions ['colcon_pkg']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extension 'colcon_pkg'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extensions ['colcon_meta']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extension 'colcon_meta'
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extensions ['ros']
+[0.234s] Level 1:colcon.colcon_core.package_identification:_identify(camera_processor) by extension 'ros'
+[0.235s] DEBUG:colcon.colcon_core.package_identification:Package 'camera_processor' with type 'ros.ament_python' and name 'camera_processor'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extensions ['ignore', 'ignore_ament_install']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extension 'ignore'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extension 'ignore_ament_install'
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extensions ['colcon_pkg']
+[0.235s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extension 'colcon_pkg'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extensions ['colcon_meta']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extension 'colcon_meta'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extensions ['ros']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(input_handler) by extension 'ros'
+[0.236s] DEBUG:colcon.colcon_core.package_identification:Package 'input_handler' with type 'ros.ament_python' and name 'input_handler'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.236s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extensions ['ignore', 'ignore_ament_install']
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extension 'ignore'
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extension 'ignore_ament_install'
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extensions ['colcon_pkg']
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extension 'colcon_pkg'
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extensions ['colcon_meta']
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extension 'colcon_meta'
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extensions ['ros']
+[0.237s] Level 1:colcon.colcon_core.package_identification:_identify(process_handler) by extension 'ros'
+[0.238s] DEBUG:colcon.colcon_core.package_identification:Package 'process_handler' with type 'ros.ament_python' and name 'process_handler'
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extensions ['ignore', 'ignore_ament_install']
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extension 'ignore'
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extension 'ignore_ament_install'
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extensions ['colcon_pkg']
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extension 'colcon_pkg'
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extensions ['colcon_meta']
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extension 'colcon_meta'
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extensions ['ros']
+[0.238s] Level 1:colcon.colcon_core.package_identification:_identify(process_msgs) by extension 'ros'
+[0.239s] DEBUG:colcon.colcon_core.package_identification:Package 'process_msgs' with type 'ros.ament_cmake' and name 'process_msgs'
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extensions ['ignore', 'ignore_ament_install']
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extension 'ignore'
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extension 'ignore_ament_install'
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extensions ['colcon_pkg']
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extension 'colcon_pkg'
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extensions ['colcon_meta']
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extension 'colcon_meta'
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extensions ['ros']
+[0.239s] Level 1:colcon.colcon_core.package_identification:_identify(robot_controller) by extension 'ros'
+[0.240s] DEBUG:colcon.colcon_core.package_identification:Package 'robot_controller' with type 'ros.ament_cmake' and name 'robot_controller'
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extensions ['ignore', 'ignore_ament_install']
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extension 'ignore'
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extension 'ignore_ament_install'
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extensions ['colcon_pkg']
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extension 'colcon_pkg'
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extensions ['colcon_meta']
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extension 'colcon_meta'
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extensions ['ros']
+[0.240s] Level 1:colcon.colcon_core.package_identification:_identify(scene_handler) by extension 'ros'
+[0.241s] DEBUG:colcon.colcon_core.package_identification:Package 'scene_handler' with type 'ros.ament_cmake' and name 'scene_handler'
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extensions ['ignore', 'ignore_ament_install']
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extension 'ignore'
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extension 'ignore_ament_install'
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extensions ['colcon_pkg']
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extension 'colcon_pkg'
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extensions ['colcon_meta']
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extension 'colcon_meta'
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extensions ['ros']
+[0.241s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam) by extension 'ros'
+[0.242s] DEBUG:colcon.colcon_core.package_identification:Package 'usb_cam' with type 'ros.ament_python' and name 'usb_cam'
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extensions ['ignore', 'ignore_ament_install']
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'ignore'
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'ignore_ament_install'
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extensions ['colcon_pkg']
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'colcon_pkg'
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extensions ['colcon_meta']
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'colcon_meta'
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extensions ['ros']
+[0.242s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'ros'
+[0.243s] DEBUG:colcon.colcon_core.package_identification:Failed to parse potential ROS package manifest in'usb_cam22': Error(s) in package 'usb_cam22/package.xml':
+The package "usb_cam2" must not "exec_depend" on a package with the same name as this package
+[0.243s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extensions ['cmake', 'python']
+[0.243s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'cmake'
+[0.243s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'python'
+[0.243s] DEBUG:colcon.colcon_core.package_identification:Python package in 'usb_cam22' passes arguments to the setup() function which requires a different identification extension than 'python'
+[0.243s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extensions ['python_setup_py']
+[0.243s] Level 1:colcon.colcon_core.package_identification:_identify(usb_cam22) by extension 'python_setup_py'
+[0.459s] DEBUG:colcon.colcon_core.package_identification:Package 'usb_cam22' with type 'python' and name 'usb_cam2'
+[0.459s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.459s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.459s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.459s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.459s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'cmake_args' from command line to 'None'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'cmake_target' from command line to 'None'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'cmake_clean_cache' from command line to 'False'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'cmake_clean_first' from command line to 'False'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'cmake_force_configure' from command line to 'False'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'ament_cmake_args' from command line to 'None'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'catkin_cmake_args' from command line to 'None'
+[0.479s] Level 5:colcon.colcon_core.verb:set package 'bringup_robot' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.479s] DEBUG:colcon.colcon_core.verb:Building package 'bringup_robot' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/bringup_robot', 'symlink_install': False, 'test_result_base': None}
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'cmake_args' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'cmake_target' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'cmake_clean_cache' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'cmake_clean_first' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'cmake_force_configure' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'ament_cmake_args' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'catkin_cmake_args' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'camera_processor' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.480s] DEBUG:colcon.colcon_core.verb:Building package 'camera_processor' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/camera_processor', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/camera_processor', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/camera_processor', 'symlink_install': False, 'test_result_base': None}
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'cmake_args' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'cmake_target' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'cmake_clean_cache' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'cmake_clean_first' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'cmake_force_configure' from command line to 'False'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'ament_cmake_args' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'catkin_cmake_args' from command line to 'None'
+[0.480s] Level 5:colcon.colcon_core.verb:set package 'input_handler' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.480s] DEBUG:colcon.colcon_core.verb:Building package 'input_handler' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/input_handler', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/input_handler', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/input_handler', 'symlink_install': False, 'test_result_base': None}
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'cmake_args' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'cmake_target' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'cmake_clean_cache' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'cmake_clean_first' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'cmake_force_configure' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'ament_cmake_args' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'catkin_cmake_args' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_handler' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.481s] DEBUG:colcon.colcon_core.verb:Building package 'process_handler' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_handler', 'symlink_install': False, 'test_result_base': None}
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'cmake_args' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'cmake_target' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[0.481s] Level 5:colcon.colcon_core.verb:set package 'process_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.481s] DEBUG:colcon.colcon_core.verb:Building package 'process_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_msgs', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs', 'symlink_install': False, 'test_result_base': None}
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'cmake_args' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'cmake_target' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'cmake_clean_cache' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'cmake_clean_first' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'cmake_force_configure' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'ament_cmake_args' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'catkin_cmake_args' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'robot_controller' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.482s] DEBUG:colcon.colcon_core.verb:Building package 'robot_controller' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/robot_controller', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/robot_controller', 'symlink_install': False, 'test_result_base': None}
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'cmake_args' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'cmake_target' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'cmake_clean_cache' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'cmake_clean_first' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'cmake_force_configure' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'ament_cmake_args' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'catkin_cmake_args' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'scene_handler' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.482s] DEBUG:colcon.colcon_core.verb:Building package 'scene_handler' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/scene_handler', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/scene_handler', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/scene_handler', 'symlink_install': False, 'test_result_base': None}
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'cmake_args' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'cmake_target' from command line to 'None'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'cmake_clean_cache' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'cmake_clean_first' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'cmake_force_configure' from command line to 'False'
+[0.482s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'ament_cmake_args' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'catkin_cmake_args' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.483s] DEBUG:colcon.colcon_core.verb:Building package 'usb_cam' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam', 'symlink_install': False, 'test_result_base': None}
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'cmake_args' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'cmake_target' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'cmake_clean_cache' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'cmake_clean_first' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'cmake_force_configure' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'ament_cmake_args' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'catkin_cmake_args' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'usb_cam2' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.483s] DEBUG:colcon.colcon_core.verb:Building package 'usb_cam2' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam2', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam2', 'merge_install': False, 'path': '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam22', 'symlink_install': False, 'test_result_base': None}
+[0.483s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.484s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.484s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/bringup_robot' with build type 'ament_python'
+[0.484s] Level 1:colcon.colcon_core.shell:create_environment_hook('bringup_robot', 'ament_prefix_path')
+[0.487s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.487s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/share/bringup_robot/hook/ament_prefix_path.ps1'
+[0.488s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/share/bringup_robot/hook/ament_prefix_path.dsv'
+[0.489s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/share/bringup_robot/hook/ament_prefix_path.sh'
+[0.490s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.490s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.491s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/michael/ros2_ws/mega_prosjekt/install/process_msgs' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.491s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/michael/ros2_ws/mega_prosjekt/install/process_handler' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.491s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/michael/ros2_ws/mega_prosjekt/install/input_handler' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.491s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/michael/ros2_ws/mega_prosjekt/install/camera_processor' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.491s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/michael/ros2_ws/mega_prosjekt/install/bringup_robot' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[0.492s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/michael/ros2_ws/mega_prosjekt/install/process_msgs' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.496s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/camera_processor' with build type 'ament_python'
+[0.497s] Level 1:colcon.colcon_core.shell:create_environment_hook('camera_processor', 'ament_prefix_path')
+[0.497s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/camera_processor/share/camera_processor/hook/ament_prefix_path.ps1'
+[0.497s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/camera_processor/share/camera_processor/hook/ament_prefix_path.dsv'
+[0.498s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/camera_processor/share/camera_processor/hook/ament_prefix_path.sh'
+[0.499s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.499s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.503s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/input_handler' with build type 'ament_python'
+[0.503s] Level 1:colcon.colcon_core.shell:create_environment_hook('input_handler', 'ament_prefix_path')
+[0.503s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/input_handler/share/input_handler/hook/ament_prefix_path.ps1'
+[0.504s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/input_handler/share/input_handler/hook/ament_prefix_path.dsv'
+[0.504s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/input_handler/share/input_handler/hook/ament_prefix_path.sh'
+[0.505s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.505s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.509s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_handler' with build type 'ament_python'
+[0.509s] Level 1:colcon.colcon_core.shell:create_environment_hook('process_handler', 'ament_prefix_path')
+[0.509s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/share/process_handler/hook/ament_prefix_path.ps1'
+[0.510s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/share/process_handler/hook/ament_prefix_path.dsv'
+[0.510s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/share/process_handler/hook/ament_prefix_path.sh'
+[0.511s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.511s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.515s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs' with build type 'ament_cmake'
+[0.515s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs'
+[0.515s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.515s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.519s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/robot_controller' with build type 'ament_cmake'
+[0.519s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/robot_controller'
+[0.520s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.520s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.524s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/scene_handler' with build type 'ament_cmake'
+[0.524s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/scene_handler'
+[0.524s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.524s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.531s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam' with build type 'ament_python'
+[0.531s] Level 1:colcon.colcon_core.shell:create_environment_hook('usb_cam', 'ament_prefix_path')
+[0.532s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/usb_cam/hook/ament_prefix_path.ps1'
+[0.532s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/usb_cam/hook/ament_prefix_path.dsv'
+[0.533s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/usb_cam/hook/ament_prefix_path.sh'
+[0.534s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.534s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.538s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam22'
+[0.538s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.538s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.774s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/bringup_robot'
+[0.774s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.774s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.020s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/camera_processor'
+[1.020s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.020s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.253s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/input_handler'
+[1.254s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.254s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.489s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_handler'
+[1.489s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.489s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.500s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam:/home/michael/ros2_ws/mega_prosjekt/install/process_handler:/home/michael/ros2_ws/mega_prosjekt/install/input_handler:/home/michael/ros2_ws/mega_prosjekt/install/camera_processor:/home/michael/ros2_ws/mega_prosjekt/install/bringup_robot:/home/michael/ros2_ws/MegaProsjekt/install/launch_files:/home/michael/ros2_ws/MegaProsjekt/install/camera_processor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.venv) /usr/bin/cmake /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs -DCMAKE_INSTALL_PREFIX=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_msgs
+[1.506s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/robot_controller': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam:/home/michael/ros2_ws/mega_prosjekt/install/process_handler:/home/michael/ros2_ws/mega_prosjekt/install/input_handler:/home/michael/ros2_ws/mega_prosjekt/install/camera_processor:/home/michael/ros2_ws/mega_prosjekt/install/bringup_robot:/home/michael/ros2_ws/MegaProsjekt/install/launch_files:/home/michael/ros2_ws/MegaProsjekt/install/camera_processor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.venv) /usr/bin/cmake /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/robot_controller -DCMAKE_INSTALL_PREFIX=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller
+[1.508s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/scene_handler': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam:/home/michael/ros2_ws/mega_prosjekt/install/process_handler:/home/michael/ros2_ws/mega_prosjekt/install/input_handler:/home/michael/ros2_ws/mega_prosjekt/install/camera_processor:/home/michael/ros2_ws/mega_prosjekt/install/bringup_robot:/home/michael/ros2_ws/MegaProsjekt/install/launch_files:/home/michael/ros2_ws/MegaProsjekt/install/camera_processor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.venv) /usr/bin/cmake /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/scene_handler -DCMAKE_INSTALL_PREFIX=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/scene_handler
+[1.751s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam'
+[1.751s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.751s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.405s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/camera_processor': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/camera_processor/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/camera_processor/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/camera_processor build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/camera_processor/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/camera_processor/install.log --single-version-externally-managed install_data
+[2.415s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_handler': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/process_handler build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/install.log --single-version-externally-managed install_data
+[2.444s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/input_handler': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/input_handler/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/input_handler/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/input_handler build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/input_handler/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/input_handler/install.log --single-version-externally-managed install_data
+[2.680s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/usb_cam build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/install.log --single-version-externally-managed install_data
+[2.710s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/bringup_robot': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/bringup_robot build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/install.log --single-version-externally-managed install_data
+[2.729s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam22': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam2/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam2/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/usb_cam2 build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam2/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam2/install.log --single-version-externally-managed install_data
+[2.779s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/robot_controller' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam:/home/michael/ros2_ws/mega_prosjekt/install/process_handler:/home/michael/ros2_ws/mega_prosjekt/install/input_handler:/home/michael/ros2_ws/mega_prosjekt/install/camera_processor:/home/michael/ros2_ws/mega_prosjekt/install/bringup_robot:/home/michael/ros2_ws/MegaProsjekt/install/launch_files:/home/michael/ros2_ws/MegaProsjekt/install/camera_processor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.venv) /usr/bin/cmake /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/robot_controller -DCMAKE_INSTALL_PREFIX=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller
+[2.799s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(robot_controller)
+[2.803s] Level 1:colcon.colcon_core.environment:checking '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller' for CMake module files
+[2.803s] Level 1:colcon.colcon_core.environment:checking '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller' for CMake config files
+[2.804s] Level 1:colcon.colcon_core.environment:checking '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/bin'
+[2.804s] Level 1:colcon.colcon_core.environment:checking '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/lib/pkgconfig/robot_controller.pc'
+[2.804s] Level 1:colcon.colcon_core.environment:checking '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/lib/python3.12/site-packages'
+[2.805s] Level 1:colcon.colcon_core.environment:checking '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/bin'
+[2.805s] INFO:colcon.colcon_core.shell:Creating package script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/share/robot_controller/package.ps1'
+[2.809s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/share/robot_controller/package.dsv'
+[2.811s] INFO:colcon.colcon_core.shell:Creating package script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/share/robot_controller/package.sh'
+[2.814s] INFO:colcon.colcon_core.shell:Creating package script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/share/robot_controller/package.bash'
+[2.816s] INFO:colcon.colcon_core.shell:Creating package script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/share/robot_controller/package.zsh'
+[2.818s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/robot_controller/share/colcon-core/packages/robot_controller)
+[5.742s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[5.742s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[5.742s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '1'
+[5.742s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[5.745s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify2': 'notify2' not found
+[5.745s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[5.745s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[5.745s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify_send'
+[5.772s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[5.772s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/local_setup.ps1'
+[5.774s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/_local_setup_util_ps1.py'
+[5.775s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/setup.ps1'
+[5.777s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/local_setup.sh'
+[5.778s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/_local_setup_util_sh.py'
+[5.778s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/setup.sh'
+[5.780s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/local_setup.bash'
+[5.781s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/setup.bash'
+[5.782s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/local_setup.zsh'
+[5.783s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/setup.zsh'

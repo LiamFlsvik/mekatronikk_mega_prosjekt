@@ -1,0 +1,21 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from process_msgs/msg/Cube.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Point.idl"
+
+module process_msgs {
+  module msg {
+    struct Cube {
+      @verbatim (language="comment", text=
+        "red, yellow, blue, green")
+      string color;
+
+      geometry_msgs::msg::Point position;
+
+      @verbatim (language="comment", text=
+        "angle in degrees or radians (your choice)")
+      float angle;
+    };
+  };
+};

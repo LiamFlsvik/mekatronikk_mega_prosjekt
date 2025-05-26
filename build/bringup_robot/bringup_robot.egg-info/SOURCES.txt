@@ -1,0 +1,14 @@
+package.xml
+setup.cfg
+setup.py
+../build/bringup_robot/bringup_robot.egg-info/PKG-INFO
+../build/bringup_robot/bringup_robot.egg-info/SOURCES.txt
+../build/bringup_robot/bringup_robot.egg-info/dependency_links.txt
+../build/bringup_robot/bringup_robot.egg-info/requires.txt
+../build/bringup_robot/bringup_robot.egg-info/top_level.txt
+../build/bringup_robot/bringup_robot.egg-info/zip-safe
+bringup_robot/__init__.py
+resource/bringup_robot
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

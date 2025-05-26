@@ -1,0 +1,29 @@
+running egg_info
+creating ../build/usb_cam/usb_cam.egg-info
+writing ../build/usb_cam/usb_cam.egg-info/PKG-INFO
+writing dependency_links to ../build/usb_cam/usb_cam.egg-info/dependency_links.txt
+writing requirements to ../build/usb_cam/usb_cam.egg-info/requires.txt
+writing top-level names to ../build/usb_cam/usb_cam.egg-info/top_level.txt
+writing manifest file '../build/usb_cam/usb_cam.egg-info/SOURCES.txt'
+reading manifest file '../build/usb_cam/usb_cam.egg-info/SOURCES.txt'
+writing manifest file '../build/usb_cam/usb_cam.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build/lib/usb_cam
+copying usb_cam/camera_begin.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build/lib/usb_cam
+copying usb_cam/__init__.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build/lib/usb_cam
+running install
+running install_lib
+creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam
+copying /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build/lib/usb_cam/camera_begin.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam
+copying /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build/lib/usb_cam/__init__.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam
+byte-compiling /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam/camera_begin.py to camera_begin.cpython-312.pyc
+byte-compiling /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam/__init__.py to __init__.cpython-312.pyc
+running install_data
+creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/ament_index/resource_index/packages
+copying resource/usb_cam -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/ament_index/resource_index/packages
+copying package.xml -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/usb_cam
+running install_egg_info
+Copying ../build/usb_cam/usb_cam.egg-info to /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam-0.0.0-py3.12.egg-info
+running install_scripts
+writing list of installed files to '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/install.log'

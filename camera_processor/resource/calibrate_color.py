@@ -1,7 +1,7 @@
 import cv2
 from cvzone.ColorModule import ColorFinder
 
-cap = cv2.VideoCapture(2)  # Valg av kamera
+cap = cv2.VideoCapture(0)  # Valg av kamera
 color_finder = ColorFinder(True)
 
 while True:

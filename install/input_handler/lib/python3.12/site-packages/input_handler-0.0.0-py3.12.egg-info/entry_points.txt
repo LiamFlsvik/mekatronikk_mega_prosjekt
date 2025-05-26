@@ -1,0 +1,2 @@
+[console_scripts]
+input_handler = input_handler.input_handler:main

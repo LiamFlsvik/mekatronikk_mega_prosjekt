@@ -1,0 +1,242 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-45bf3898f8b50ddaf3f5.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18
+					]
+				},
+				{
+					"build" : "process_msgs__py",
+					"jsonFile" : "directory-process_msgs__py-0596539846b38b0f4879.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/process_msgs__py",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "process_msgs",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_process_msgs_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_process_msgs_egg-c599e59603ede2f81838.json",
+					"name" : "ament_cmake_python_build_process_msgs_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_copy_process_msgs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_copy_process_msgs-d4599eec80fe4038b0e8.json",
+					"name" : "ament_cmake_python_copy_process_msgs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs-b75c1b3e5524e2dad158.json",
+					"name" : "process_msgs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__cpp-11b0dc37d31569debf38.json",
+					"name" : "process_msgs__cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "process_msgs__py::@818dba91897b994a7ffa",
+					"jsonFile" : "target-process_msgs__py-ee1c9ba3a9ff857b4c21.json",
+					"name" : "process_msgs__py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_generator_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_generator_c-f056d9417b7ed6b3c7a4.json",
+					"name" : "process_msgs__rosidl_generator_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_generator_py::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_generator_py-4cd445eef8363dd14000.json",
+					"name" : "process_msgs__rosidl_generator_py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_generator_type_description::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_generator_type_description-9db7cacf9c8c047de275.json",
+					"name" : "process_msgs__rosidl_generator_type_description",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_typesupport_c-b4abff7c0eb8d083988e.json",
+					"name" : "process_msgs__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_typesupport_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_typesupport_cpp-74fda49fff899c6b7907.json",
+					"name" : "process_msgs__rosidl_typesupport_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_typesupport_fastrtps_c-2e04bdeb57ff6b639f61.json",
+					"name" : "process_msgs__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_typesupport_fastrtps_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_typesupport_fastrtps_cpp-e86b99bee4365442a714.json",
+					"name" : "process_msgs__rosidl_typesupport_fastrtps_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_typesupport_introspection_c-cb17811dddb6cedcbfd0.json",
+					"name" : "process_msgs__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs__rosidl_typesupport_introspection_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs__rosidl_typesupport_introspection_cpp-e02e50a5d144e0658eee.json",
+					"name" : "process_msgs__rosidl_typesupport_introspection_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs_s__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs_s__rosidl_typesupport_c-33e273613afde4f28103.json",
+					"name" : "process_msgs_s__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs_s__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs_s__rosidl_typesupport_fastrtps_c-3bebb8aea7f75e22de9a.json",
+					"name" : "process_msgs_s__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs_s__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs_s__rosidl_typesupport_introspection_c-b1ecc4a1bf4809546edb.json",
+					"name" : "process_msgs_s__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "process_msgs_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-process_msgs_uninstall-ccfdeea6a63f9115ac9e.json",
+					"name" : "process_msgs_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-80d2df1995014f7b17d8.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs",
+		"source" : "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

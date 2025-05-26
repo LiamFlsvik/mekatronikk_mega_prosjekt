@@ -7,12 +7,12 @@ class matrix_transformations {
     public:
 
     matrix_transformations(){
-    
-        camera_parameter_matrix = (cv::Mat_<double>(3,3) << 585.20149,    0.0,         359.74242,
-                                                            0.0,           584.03096,  256.50443,
+
+        camera_parameter_matrix = (cv::Mat_<double>(3,3) << -530.47292,    0.0,         357.1054,
+                                                            0.0,           530.51882,  258.43042,
                                                             0.0,           0.0,          1.0);
 
-        distortion_coefficients = (cv::Mat_<double>(1,5) << 0.173910, -0.181651, 0.010147, 0.032039, 0.0);
+        distortion_coefficients = (cv::Mat_<double>(1,5) << 0.073635, -0.121473, -0.000465, 0.015358, 0.00);
     } 
     
     public:
@@ -25,9 +25,9 @@ class matrix_transformations {
         std::vector<cv::Point2d> undistorted_points;
         cv::undistortPoints(distored_points, undistorted_points, camera_parameter_matrix, distortion_coefficients);
 
-        //Normalized pixel coordinates:
-        double x = undistorted_points[0].x * depth;
-        double y = undistorted_points[0].y * depth;
+        //Normalized camera coordinates:
+        double x =  -0.025+undistorted_points[0].x * depth;
+        double y =  0.12  + undistorted_points[0].y * depth;
         double z = depth;
         
         return Eigen::Vector3d(x, y, z);
@@ -77,7 +77,7 @@ class matrix_transformations {
     //Position in [m]
     void set_position(double x, double y, double z) {
         position = {x, y, z};
-        depth = -z;
+        depth = -z-0.1;
     }
 
     cv::Mat camera_parameter_matrix;
@@ -89,8 +89,4 @@ class matrix_transformations {
     cv::Mat distortion_coefficients;
     std::vector<double> position;
     std::vector<double> orientation;
-    
-
-
-
 };

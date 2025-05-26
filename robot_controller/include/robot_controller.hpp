@@ -31,7 +31,6 @@ public:
 
     parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
 
-
   //publish to joint states
     //joint_state_publisher = this->create_publisher<sensor_msgs::msg::JointState>("current_joint_angles", 10);
     //timer_ = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&robot_controller::publishJointStates, this));
@@ -54,6 +53,8 @@ void scan_workplace(){
 This code starts at a angle defined in the parameter scan_angle_start and 
 performs a half circle movement in the counter-clockwise and then the clockwise direction.
 */
+
+
   const double angle_increment = (M_PI / num_scan_points);
   double angle = scan_angle_start;
 

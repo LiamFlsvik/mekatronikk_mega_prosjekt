@@ -13,6 +13,7 @@ find_package(moveit_ros_planning_interface REQUIRED)
 find_package(Eigen3 3.3 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(process_msgs REQUIRED)
+find_package(robot_state_publisher REQUIRED)
 include_directories(include)
 
 add_executable(scene_handler_node src/main.cpp include/scene_handler.hpp)
@@ -24,6 +25,7 @@ ament_target_dependencies(scene_handler_node
   geometry_msgs
   shape_msgs
   process_msgs 
+  robot_state_publisher
 )
 
 install(TARGETS scene_handler_node

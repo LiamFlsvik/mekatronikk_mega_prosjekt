@@ -17,7 +17,7 @@ class matrix_transformations {
     
     public:
     // Camera pixel coordinates to base coordinates:
-    Eigen::Matrix <double,3,1> pixel_to_camera_coordinates(const std::vector<double>& pixel_coordinates, double depth_ = 0.3) {
+    Eigen::Matrix <double,3,1> pixel_to_camera_coordinates(const std::vector<double>& pixel_coordinates) {
         std::vector<cv::Point2d> distored_points;
         distored_points.emplace_back(pixel_coordinates[0], pixel_coordinates[1]);
 
@@ -26,47 +26,39 @@ class matrix_transformations {
         cv::undistortPoints(distored_points, undistorted_points, camera_parameter_matrix, distortion_coefficients);
 
         //Normalized pixel coordinates:
-        double x = undistorted_points[0].x * depth_;
-        double y = undistorted_points[0].y * depth_;
-        double z = depth_;
+        double x = undistorted_points[0].x * depth;
+        double y = undistorted_points[0].y * depth;
+        double z = depth;
         
         return Eigen::Vector3d(x, y, z);
     }
 
-    // Camera coordinates to base coordinates:
-    std::vector<double> camera_to_base_coordinates(const std::vector<double>& pixel_coordinates, const std::vector<double>& joint_angles, double depth_ = 0.3){
-        //Get camera coordinates:
-        Eigen::Vector4d camera_coordinates;
-        camera_coordinates << pixel_to_camera_coordinates(pixel_coordinates, depth_), 1.0;
 
-        //Get transformation matrix from base to camera:
-        Eigen::Matrix<double, 4, 4> c_T_b = T_camera_from_base(joint_angles);
-        Eigen::Matrix4d b_T_c = c_T_b.inverse(); 
+    std::vector<double> base_T_pixel(const std::vector<double>& pixel_coordinates) {
+        // 1) Build base->tool from stored pose (x,y,z,yaw)
+        double yaw = orientation[2];
+        Eigen::Matrix<double,4,4> base_T_tool;
+        base_T_tool <<
+        std::cos(yaw), -std::sin(yaw), 0.0, position[0],
+        std::sin(yaw),  std::cos(yaw), 0.0, position[1],
+                0.0,            0.0,    1.0, position[2],
+                0.0,            0.0,    0.0,          1.0;
 
-        //Transform camera coordinates to base coordinates:
-        Eigen::Vector4d base_coordinates = b_T_c * camera_coordinates;
-        std::vector<double> base_coordinates_vector = {base_coordinates(0), base_coordinates(1), base_coordinates(2)};
-        return base_coordinates_vector;
-    }
+        // 2) Tool->camera via DH (d=0.1, a=0.08)
+        Eigen::Matrix<double,4,4> tool_T_camera = calculate_DHMatrix(0.1, 0.0, 0.08, 0.0);
 
-    // Transformation matrix from base to camera
-    Eigen::Matrix <double,4,4> T_camera_from_base(const std::vector<double> joint_angles_){
-        Eigen::Matrix <double,4,4> camera_T_base;   
-        camera_T_base = 
-            calculate_DHMatrix(0.1519,    joint_angles_[0],         0.0,            M_PI/2.0)*
-            calculate_DHMatrix(0.0,       joint_angles_[1],      -0.24365,               0.0)*
-            calculate_DHMatrix(0.0,       joint_angles_[2],      -0.213250,              0.0)*
-            calculate_DHMatrix(0.11235,   joint_angles_[3],      0.0,               M_PI/2.0)*
-            calculate_DHMatrix(0.08535,   joint_angles_[4],      0.0,              -M_PI/2.0)*
-            calculate_DHMatrix(0.0819,    joint_angles_[5],      0.0,                    0.0);
-           // calculate_DHMatrix(0.0,                    0.0,      0.00,                   0.0);  // 0.1 M_PI 0.08 0.0
-        return camera_T_base;
-    }
+        // 3) Chain to get base->camera
+        Eigen::Matrix<double,4,4> base_T_camera = base_T_tool * tool_T_camera;
 
-    std::vector<double> calculate_endeffector_coordinates(std::vector<double> joint_angles_){
-        Eigen::Matrix <double,4,4> camera_T_base = T_camera_from_base(joint_angles_);
-        return {camera_T_base(0,3), camera_T_base(1,3), camera_T_base(2,3)};
-    }
+        // 4) Back-project pixel into camera frame
+        Eigen::Vector3d p_camera = pixel_to_camera_coordinates(pixel_coordinates);
+        Eigen::Vector4d p_camera_homogene{p_camera.x(), p_camera.y(), p_camera.z(), 1.0};
+
+        // 5) Transform to world
+        Eigen::Vector4d world_h = base_T_camera * p_camera_homogene;
+
+        return {world_h.x(), world_h.y(), world_h.z()};
+  }
 
     //DH transformation matrix
     Eigen::Matrix <double,4,4> calculate_DHMatrix(double d,double theta,double a,double alpha){
@@ -78,7 +70,15 @@ class matrix_transformations {
                     0, 0, 0, 1; 
         return tr_matrix;
     }
-
+    //Orientation in [rad]
+    void set_orientation(double roll, double pitch, double yaw) {
+        orientation = {roll, pitch, yaw};
+    }
+    //Position in [m]
+    void set_position(double x, double y, double z) {
+        position = {x, y, z};
+        depth = -z;
+    }
 
     cv::Mat camera_parameter_matrix;
     double c_x = 0.0;
@@ -87,6 +87,9 @@ class matrix_transformations {
     std::vector<double> joint_angles = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     std::vector<double> endeeffector_position = {0.0, 0.0, 0.0};
     cv::Mat distortion_coefficients;
+    std::vector<double> position;
+    std::vector<double> orientation;
+    
 
 
 

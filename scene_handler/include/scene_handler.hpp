@@ -11,7 +11,10 @@
 //#include "box_handler.hpp"
 #include "process_msgs/msg/cube.hpp"
 #include "process_msgs/msg/cube_array.hpp"
+#include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
 
 using moveit::planning_interface::MoveGroupInterface;
 using moveit::planning_interface::PlanningSceneInterface;
@@ -24,44 +27,84 @@ class scene_handler: public rclcpp::Node{
   joint_values({0.0, 0.0, 0.0, 0.0, 0.0, 0.0}),
   matrix_transformations_(),
   move_group_interface(std::shared_ptr<rclcpp::Node>(this), "ur_manipulator"),
-  planning_scene_interface() {
-
-    
-
-  joint_state_subscriber = this->create_subscription<sensor_msgs::msg::JointState>(
+  planning_scene_interface(),
+  tf_buffer_(this->get_clock()),
+  tf_listener_(tf_buffer_)
+  {
+    joint_state_subscriber = this->create_subscription<sensor_msgs::msg::JointState>(
       "joint_states",
       rclcpp::SensorDataQoS(),
       std::bind(&scene_handler::update_joint_states, this, std::placeholders::_1));
 
-  cube_array_subscriber = this->create_subscription<process_msgs::msg::CubeArray>(
+    cube_array_subscriber = this->create_subscription<process_msgs::msg::CubeArray>(
       "cube_array", 10, std::bind(&scene_handler::update_cube_array, this, std::placeholders::_1));
 
+    planning_scene_diff_publisher = this->create_publisher<moveit_msgs::msg::PlanningScene>("planning_scene", 10);
 
-  planning_scene_diff_publisher = this->create_publisher<moveit_msgs::msg::PlanningScene>("planning_scene", 10);
-
-  create_safe_zone();
-
-  add_collision_object("red box", {0.2, 0.4, 0.0}, M_PI/4, {box_size_x, box_size_y, box_size_z}, "red");
-  add_collision_object("green box",{0.2, 0.6, 0.0}, M_PI*1.2,{box_size_x, box_size_y, box_size_z}, "green");
+    create_safe_zone();
+    add_collision_object("red box", {0.2, 0.4, 0.0}, M_PI/4, {box_size_x, box_size_y, box_size_z}, "red");
+    add_collision_object("green box",{0.2, 0.6, 0.0}, M_PI*1.2,{box_size_x, box_size_y, box_size_z}, "green");
   }
 
   void update_joint_states(sensor_msgs::msg::JointState::SharedPtr msg) {
-    // Update the joint states in the MoveGroupInterface
     joint_values = msg->position;
     RCLCPP_INFO(this->get_logger(), "Updated joint states from topic: Joint 1:%f, Joint 2:%f, Joint 3:%f, Joint 4:%f, Joint 5:%f, Joint 6:%f",
                                                                       joint_values[0], joint_values[1], joint_values[2], joint_values[3], joint_values[4], joint_values[5]);
 
-    auto test_box = matrix_transformations_.camera_to_base_coordinates({640/2, 480/2}, joint_values, 0.3);
-    remove_collision_object("blue box" +std::to_string(object_counter-1));
-    add_collision_object("blue box",{test_box[0], test_box[1], test_box[2]}, M_PI/3,{box_size_x, box_size_y, box_size_z}, "blue");
     
-    std::vector<double> endeffector = matrix_transformations_.calculate_endeffector_coordinates(joint_values);
-    RCLCPP_INFO(this->get_logger(), "Endeffector coordinates: x: %f, y: %f, z: %f", endeffector[0], endeffector[1], endeffector[2]);
+    // TF2-based lookup for tool0
+    geometry_msgs::msg::TransformStamped transformStamped;
+    try {
+      transformStamped = tf_buffer_.lookupTransform(
+        "base_link",  // source frame
+        "tool0",      // target frame
+        rclcpp::Time(0),
+        rclcpp::Duration::from_seconds(0.5));
+    } catch (const tf2::TransformException &ex) {
+      RCLCPP_WARN(this->get_logger(), "Could not transform from base_link to tool0: %s", ex.what());
+      return;
+    }
+
+      // extract translation
+    double x  = transformStamped.transform.translation.x;
+    double y  = transformStamped.transform.translation.y;
+    double z  = transformStamped.transform.translation.z;
+
+    // extract quaternion
+    double qx = transformStamped.transform.rotation.x;
+    double qy = transformStamped.transform.rotation.y;
+    double qz = transformStamped.transform.rotation.z;
+    double qw = transformStamped.transform.rotation.w;
+
+    // log the raw pose
+    RCLCPP_INFO(get_logger(),
+                "Tool0 via TF: [%.3f, %.3f, %.3f], "
+                "quat [%.3f, %.3f, %.3f, %.3f]",
+                x, y, z, qx, qy, qz, qw);
+
+    // build and normalize the tf2::Quaternion
+    tf2::Quaternion q(qx, qy, qz, qw);
+    q.normalize();
+
+    // now convert to RPY
+    double roll, pitch, yaw;
+    tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
+    RCLCPP_INFO(get_logger(),
+                "Tool0 RPY (rad): roll=%.3f, pitch=%.3f, yaw=%.3f",
+                roll, pitch, yaw);
+
+
+    matrix_transformations_.set_orientation(roll, pitch, yaw);
+    matrix_transformations_.set_position(x, y, z);
+
+    
+    auto test_box = matrix_transformations_.base_T_pixel({300,300});
+    remove_collision_object("blue box" + std::to_string(object_counter-1));
+    add_collision_object("blue box", {test_box[0], test_box[1], 0.0}, M_PI/3, {box_size_x, box_size_y, box_size_z},"blue");
 
   }
 
   void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
-    // Update the box positions from the cube array message
     auto cubes = msg->cubes;
     for (const auto& cube : cubes) {
       add_box(cube.color,{cube.position.x, cube.position.y,cube.position.z}, cube.angle);
@@ -69,32 +112,18 @@ class scene_handler: public rclcpp::Node{
   }
 
   void update_box(std::string name, std::vector<double> position, double yaw = 0.0) {
-    //Update the box position
     remove_collision_object(name);
-    //box_handler_.update_box(name, position);
     add_collision_object(name, position, 0.0, {box_size_x, box_size_y, box_size_z}, "green");
   }
 
   void add_box(std::string name, std::vector<double> position, double yaw){
-    //remove_collision_object(name);
-    //box_handler_.create_virtual_box(name, "green", position, yaw, {0.0, 0.0, 0.0}, {box_size_x, box_size_y, box_size_z});
     add_collision_object(name, position, 0.0, {box_size_x, box_size_y, box_size_z}, "green");
   }
 
   void create_safe_zone(){
-    /*Workspace measurments:
-      base_plate:
-        x 45cm y25cm z1.5cm
-      Table (smaller than the actual):
-        x 85cm y 80cm z 
-    */
-
-  //Security zones:
     add_collision_object("Robot base plate",{0.0,0.0,-0.015}, 0.0, {0.45, 0.25,0.015},"grey");
     add_collision_object("Working scene",{0.0, 0.25, -working_table_z-0.015}, 0.0,{working_table_x, working_table_y, working_table_z}, "grey");
-  
   }
-
 
   static std_msgs::msg::ColorRGBA object_color(std::string color = "green") {
     if (color == "yellow" ){
@@ -201,8 +230,7 @@ class scene_handler: public rclcpp::Node{
 
     CollisionObject collision_object;
     rclcpp::Subscription<process_msgs::msg::CubeArray>::SharedPtr cube_array_subscriber;   
-
-  
-
+    tf2_ros::Buffer              tf_buffer_;
+    tf2_ros::TransformListener   tf_listener_;
 
 };

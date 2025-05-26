@@ -10,6 +10,10 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2/LinearMath/Quaternion.hpp>
 #include <color_logger.hpp>
+#include <process_msgs/msg/task.hpp>
+#include <process_msgs/msg/task_feedback.hpp>
+#include <process_msgs/msg/scene_state.hpp>
+
 //TODO: Service
 using RobotModelLoader = robot_model_loader::RobotModelLoader;
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
@@ -25,13 +29,29 @@ public:
     PLANNING_GROUP("ur_manipulator"),
     move_group_interface(std::shared_ptr<rclcpp::Node>(this), PLANNING_GROUP),
     logger(rclcpp::get_logger("robot_controller_node")){
-    
-  //Parameters
+  
+    task_sub_ = this->create_subscription<process_msgs::msg::Task>(
+      "/task_command", 10,
+      [this](const process_msgs::msg::Task::SharedPtr msg) {
+        handle_task(msg);
+      });
+  
+    feedback_pub_ = this->create_publisher<process_msgs::msg::TaskFeedback>(
+      "/task/feedback", 10);
+  
+    scene_sub_ = this->create_subscription<process_msgs::msg::SceneState>(
+      "/scene/state", 10,
+      [this](const process_msgs::msg::SceneState::SharedPtr msg) {
+        last_scene_ = msg;
+      });
+
+    //Parameters
     parameter_init();
 
     parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
 
-  //publish to joint states
+
+    //publish to joint states
     //joint_state_publisher = this->create_publisher<sensor_msgs::msg::JointState>("current_joint_angles", 10);
     //timer_ = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&robot_controller::publishJointStates, this));
 
@@ -40,7 +60,6 @@ public:
 
     add_camera_collision();
 
-    go_to_home_position();
     move_group_interface.setStartStateToCurrentState();
 
     RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
@@ -48,7 +67,7 @@ public:
     //go_to_home_position({-M_PI/2, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
   }
 
-void scan_workplace(){
+bool scan_workplace(){
 /*
 This code starts at a angle defined in the parameter scan_angle_start and 
 performs a half circle movement in the counter-clockwise and then the clockwise direction.
@@ -69,10 +88,11 @@ performs a half circle movement in the counter-clockwise and then the clockwise 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     move_group_interface.setStartStateToCurrentState();
     }
+  return true;
 }
 
 // This code can be called to move the robots endeffector to a desired location with a specified roll, pitch and yaw.
-void move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
+bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
   //End effector roll pitch and yaw:
     tf2::Quaternion quat;
     quat.setRPY(roll, pitch, yaw);
@@ -95,23 +115,28 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       
     } else {
       RCLCPP_ERROR(logger, "Plan failed");
-      return;
+      return false;
     }
+    return sucess;
   }
  
-  void go_to_home_position(std::vector<double> home_joints_= {1.57, -1.57, 1.57, -1.57, -1.57, 0})
+  bool go_to_home_position(std::vector<double> home_joints_= {1.57, -1.57, 1.57, -1.57, -1.57, 0})
   {
-    std::vector<double> home_joints = home_joints_;
-    move_group_interface.setJointValueTarget(home_joints);
-    MoveGroupInterface::Plan plan;
-    if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS) {
-      RCLCPP_INFO(logger, "%sHome position successfully reached%s", COLOR_GREEN, COLOR_RESET);
-      move_group_interface.execute(plan);
-      std::this_thread::sleep_for(std::chrono::seconds(1));
-    } else {
-      RCLCPP_ERROR(logger, "Home planning failed");
-    }
+      std::vector<double> home_joints = home_joints_;
+      move_group_interface.setJointValueTarget(home_joints);
+      MoveGroupInterface::Plan plan;
+      auto const result = move_group_interface.plan(plan); // Add result variable
+      if (result == moveit::core::MoveItErrorCode::SUCCESS) {
+          RCLCPP_INFO(logger, "%sHome position successfully reached%s", COLOR_GREEN, COLOR_RESET);
+          move_group_interface.execute(plan);
+          std::this_thread::sleep_for(std::chrono::seconds(1));
+          return true;
+      } else {
+          RCLCPP_ERROR(logger, "Home planning failed");
+          return false;
+      }
   }
+  
 
   void add_camera_collision(){
     moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
@@ -129,6 +154,7 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     camera_pose.position.x = 0.0;
     camera_pose.position.y = -camera_offset_width;//camera_width/4;
     camera_pose.position.z = camera_offset+ camera_height/2; 
+
 
     collision_object.primitives.push_back(camera);
     collision_object.primitive_poses.push_back(camera_pose);
@@ -259,6 +285,53 @@ void move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       joint_state_publisher->publish(msg);
       RCLCPP_INFO(logger, "Published joint states: %s", msg.name[0].c_str());
     }
+
+private:
+  void handle_task(const process_msgs::msg::Task::SharedPtr msg) {
+    process_msgs::msg::TaskFeedback feedback;
+    feedback.command = msg->command;
+    
+    try {
+      if(msg->command == "MOVE_HOME") {
+        feedback.success = go_to_home_position();
+        feedback.message = feedback.success ? "Home reached" : "Move home failed";
+      }
+      else if(msg->command == "SCAN") {
+        feedback.success = scan_workplace();
+        feedback.message = feedback.success ? "Scan completed" : "Scan failed";
+      }
+      else if(msg->command == "POINT") {
+        feedback.success = scan_workplace();
+        feedback.message = feedback.success ? "Pointing completed" : "Pointing failed";
+      }
+      else {
+        feedback.success = false;
+        feedback.message = "Unknown command: " + msg->command;
+      }
+    } catch(const std::exception& e) {
+      feedback.success = false;
+      feedback.message = "Exception: " + std::string(e.what());
+    }
+    
+    feedback_pub_->publish(feedback);
+  }
+
+  bool point_to_cubes() {
+    if(!last_scene_ || last_scene_->cubes.empty()) {
+      RCLCPP_WARN(logger, "No cubes to point at");
+      return false;
+    }
+
+    for(const auto& cube : last_scene_->cubes) {
+      if(!move_robot(cube.pose.position.x,
+                     cube.pose.position.y,
+                     cube.pose.position.z)) {
+        return false;
+      }
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    return true;
+  }
    
 private:
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;
@@ -272,6 +345,7 @@ private:
   double camera_offset = 0.01;
   double scan_angle_start = 0;
   double camera_offset_width = 0.0;
+  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher;
   std::vector<std::vector<std::pair<double, double>>> poses = {{{0.1, 0.0}, {0.0, 0.1}}, {{-0.1, 0.0}, {0.0, -0.1}}};
   RobotModelLoader robot_model_loader_;
   moveit::core::RobotModelPtr robot_model_;
@@ -284,8 +358,10 @@ private:
   rclcpp::Logger logger;
   tf2::Quaternion quat;
   rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher;
+  rclcpp::Subscription<process_msgs::msg::Task>::SharedPtr task_sub_;
+  rclcpp::Publisher<process_msgs::msg::TaskFeedback>::SharedPtr feedback_pub_;
+  rclcpp::Subscription<process_msgs::msg::SceneState>::SharedPtr scene_sub_;
+  process_msgs::msg::SceneState::SharedPtr last_scene_;
 
-  
 };
 

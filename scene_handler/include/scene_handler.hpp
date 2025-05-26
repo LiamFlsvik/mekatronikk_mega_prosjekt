@@ -8,7 +8,10 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2/LinearMath/Quaternion.hpp>
 #include "matrix_transformations.hpp"
-#include "box_handler.hpp"
+//#include "box_handler.hpp"
+#include "process_msgs/msg/cube.hpp"
+#include "process_msgs/msg/cube_array.hpp"
+
 
 using moveit::planning_interface::MoveGroupInterface;
 using moveit::planning_interface::PlanningSceneInterface;
@@ -30,6 +33,10 @@ class scene_handler: public rclcpp::Node{
       rclcpp::SensorDataQoS(),
       std::bind(&scene_handler::update_joint_states, this, std::placeholders::_1));
 
+  cube_array_subscriber = this->create_subscription<process_msgs::msg::CubeArray>(
+      "cube_array", 10, std::bind(&scene_handler::update_cube_array, this, std::placeholders::_1));
+
+
   planning_scene_diff_publisher = this->create_publisher<moveit_msgs::msg::PlanningScene>("planning_scene", 10);
 
   create_safe_zone();
@@ -44,15 +51,34 @@ class scene_handler: public rclcpp::Node{
     RCLCPP_INFO(this->get_logger(), "Updated joint states from topic: Joint 1:%f, Joint 2:%f, Joint 3:%f, Joint 4:%f, Joint 5:%f, Joint 6:%f",
                                                                       joint_values[0], joint_values[1], joint_values[2], joint_values[3], joint_values[4], joint_values[5]);
 
-    auto test_box = matrix_transformations_.camera_to_base_coordinates({10.0, 10.0}, joint_values, 0.3);
+    auto test_box = matrix_transformations_.camera_to_base_coordinates({640/2, 480/2}, joint_values, 0.3);
     remove_collision_object("blue box" +std::to_string(object_counter-1));
-    add_collision_object("blue box",{test_box[0], test_box[1], 0}, M_PI/3,{box_size_x, box_size_y, box_size_z}, "blue");
+    add_collision_object("blue box",{test_box[0], test_box[1], test_box[2]}, M_PI/3,{box_size_x, box_size_y, box_size_z}, "blue");
+    
+    std::vector<double> endeffector = matrix_transformations_.calculate_endeffector_coordinates(joint_values);
+    RCLCPP_INFO(this->get_logger(), "Endeffector coordinates: x: %f, y: %f, z: %f", endeffector[0], endeffector[1], endeffector[2]);
+
   }
 
-  void add_box(std::string name, std::vector<double> position){
+  void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
+    // Update the box positions from the cube array message
+    auto cubes = msg->cubes;
+    for (const auto& cube : cubes) {
+      add_box(cube.color,{cube.position.x, cube.position.y,cube.position.z}, cube.angle);
+    } 
+  }
+
+  void update_box(std::string name, std::vector<double> position, double yaw = 0.0) {
+    //Update the box position
     remove_collision_object(name);
+    //box_handler_.update_box(name, position);
     add_collision_object(name, position, 0.0, {box_size_x, box_size_y, box_size_z}, "green");
-    box_handler_.create_virtual_box(name, "green", position, {0.0, 0.0, 0.0}, {box_size_x, box_size_y, box_size_z});
+  }
+
+  void add_box(std::string name, std::vector<double> position, double yaw){
+    //remove_collision_object(name);
+    //box_handler_.create_virtual_box(name, "green", position, yaw, {0.0, 0.0, 0.0}, {box_size_x, box_size_y, box_size_z});
+    add_collision_object(name, position, 0.0, {box_size_x, box_size_y, box_size_z}, "green");
   }
 
   void create_safe_zone(){
@@ -66,11 +92,11 @@ class scene_handler: public rclcpp::Node{
   //Security zones:
     add_collision_object("Robot base plate",{0.0,0.0,-0.015}, 0.0, {0.45, 0.25,0.015},"grey");
     add_collision_object("Working scene",{0.0, 0.25, -working_table_z-0.015}, 0.0,{working_table_x, working_table_y, working_table_z}, "grey");
+  
   }
 
 
-  static std_msgs::msg::ColorRGBA object_color(std::string color="green") {
-    //gul grønn rød blå
+  static std_msgs::msg::ColorRGBA object_color(std::string color = "green") {
     if (color == "yellow" ){
       std_msgs::msg::ColorRGBA color;
       color.r = 0.8f; color.g = 0.8f; color.b = 0.1f; color.a = 1.0f;  
@@ -112,9 +138,9 @@ class scene_handler: public rclcpp::Node{
     shape_msgs::msg::SolidPrimitive primitive;
     primitive.type = primitive.BOX;
     primitive.dimensions.resize(3);
-    primitive.dimensions[primitive.BOX_X] = box_size_x;
-    primitive.dimensions[primitive.BOX_Y] = box_size_y;
-    primitive.dimensions[primitive.BOX_Z] = box_size_z;
+    primitive.dimensions[primitive.BOX_X] = box_size[0];
+    primitive.dimensions[primitive.BOX_Y] = box_size[1];
+    primitive.dimensions[primitive.BOX_Z] = box_size[2];
 
     tf2::Quaternion quat;
     quat.setRPY(0, 0, yaw);
@@ -122,7 +148,7 @@ class scene_handler: public rclcpp::Node{
     geometry_msgs::msg::Pose box_pose;
     box_pose.orientation = msg_quat;
 
-    box_pose.position.x = position[0]
+    box_pose.position.x = position[0];
     box_pose.position.y = position[1];
     box_pose.position.z = position[2];
 
@@ -155,6 +181,7 @@ class scene_handler: public rclcpp::Node{
     const double box_size_x = 0.05;
     const double box_size_y = 0.05;
     const double box_size_z = 0.05;
+
     const double working_table_x = 0.85;
     const double working_table_y = 0.80;
     const double working_table_z = 0.01;
@@ -164,7 +191,7 @@ class scene_handler: public rclcpp::Node{
     std::vector<double> joint_values;
 
     matrix_transformations matrix_transformations_;
-    box_handler box_handler_;
+    //box_handler box_handler_;
 
     MoveGroupInterface move_group_interface;
     PlanningSceneInterface planning_scene_interface;
@@ -173,7 +200,8 @@ class scene_handler: public rclcpp::Node{
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscriber;
 
     CollisionObject collision_object;
-    
+    rclcpp::Subscription<process_msgs::msg::CubeArray>::SharedPtr cube_array_subscriber;   
+
   
 
 

@@ -16,14 +16,15 @@ public:
     }
 
 
-    void create_virtual_box(const std::string name_, std::string color, const std::vector<double> position, const std::vector<double> orientation, std::vector<double> size){
+    void create_virtual_box(const std::string name_, std::string color, const std::vector<double> position, const double yaw = 0, std::vector<double> size){
         //Check if the position is valid
-        if (position.size() != 4) {
-            throw std::runtime_error("Position must be a vector of size 4 including; x, y, z. and yaw");
+        if (position.size() != 3) {
+            throw std::runtime_error("Position must be a vector of size 3 including; x, y, z ");
         }
         if(!check_name(name_)){
+            
             //Create a virtual box 
-            std::vector<double> position_ = {position[0], position[1], position[2], orientation[0]}; // x, y, z, yaw
+            std::vector<double> position_ = {position[0], position[1], position[2], yaw}; // x, y, z, yaw
             std::vector<double> size = {0.1, 0.1, 0.1}; //Default size
             std::string color = color; //Default color
             virtual_boxes.emplace_back(name_, position, size, color);
@@ -34,7 +35,6 @@ public:
 
     }
     void remove_virtual_box(const std::string& name) {
-
         //Find the box with the given name
         auto it = std::remove_if(virtual_boxes.begin(), virtual_boxes.end(),
             [&name](const Box& box) { return box.name == name; });

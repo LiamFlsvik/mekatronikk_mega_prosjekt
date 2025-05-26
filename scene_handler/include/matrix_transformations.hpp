@@ -18,8 +18,6 @@ class matrix_transformations {
     public:
     // Camera pixel coordinates to base coordinates:
     Eigen::Matrix <double,3,1> pixel_to_camera_coordinates(const std::vector<double>& pixel_coordinates, double depth_ = 0.3) {
-        
-        
         std::vector<cv::Point2d> distored_points;
         distored_points.emplace_back(pixel_coordinates[0], pixel_coordinates[1]);
 
@@ -31,10 +29,8 @@ class matrix_transformations {
         double x = undistorted_points[0].x * depth_;
         double y = undistorted_points[0].y * depth_;
         double z = depth_;
-        //
-
+        
         return Eigen::Vector3d(x, y, z);
-
     }
 
     // Camera coordinates to base coordinates:
@@ -58,13 +54,18 @@ class matrix_transformations {
         Eigen::Matrix <double,4,4> camera_T_base;   
         camera_T_base = 
             calculate_DHMatrix(0.1519,    joint_angles_[0],         0.0,            M_PI/2.0)*
-            calculate_DHMatrix(0.0,       joint_angles_[1],      -0.24365,             0.0)*
-            calculate_DHMatrix(0.0,       joint_angles_[2],      -0.213250,            0.0)*
-            calculate_DHMatrix(0.11235,   joint_angles_[3],      0.0,             M_PI/2.0)*
-            calculate_DHMatrix(0.08535,   joint_angles_[4],      0.0,            -M_PI/2.0)*
-            calculate_DHMatrix(0.0819,    joint_angles_[5],      0.0,                  0.0)*
-            calculate_DHMatrix(0.1,                    0.0,      0.08,                 0.0); 
+            calculate_DHMatrix(0.0,       joint_angles_[1],      -0.24365,               0.0)*
+            calculate_DHMatrix(0.0,       joint_angles_[2],      -0.213250,              0.0)*
+            calculate_DHMatrix(0.11235,   joint_angles_[3],      0.0,               M_PI/2.0)*
+            calculate_DHMatrix(0.08535,   joint_angles_[4],      0.0,              -M_PI/2.0)*
+            calculate_DHMatrix(0.0819,    joint_angles_[5],      0.0,                    0.0);
+           // calculate_DHMatrix(0.0,                    0.0,      0.00,                   0.0);  // 0.1 M_PI 0.08 0.0
         return camera_T_base;
+    }
+
+    std::vector<double> calculate_endeffector_coordinates(std::vector<double> joint_angles_){
+        Eigen::Matrix <double,4,4> camera_T_base = T_camera_from_base(joint_angles_);
+        return {camera_T_base(0,3), camera_T_base(1,3), camera_T_base(2,3)};
     }
 
     //DH transformation matrix

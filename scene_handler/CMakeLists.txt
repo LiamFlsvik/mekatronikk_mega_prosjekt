@@ -12,9 +12,8 @@ find_package(moveit_visual_tools REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(Eigen3 3.3 REQUIRED)
 find_package(OpenCV REQUIRED)
-
+find_package(process_msgs REQUIRED)
 include_directories(include)
-
 
 add_executable(scene_handler_node src/main.cpp include/scene_handler.hpp)
 
@@ -24,11 +23,14 @@ ament_target_dependencies(scene_handler_node
   moveit_msgs
   geometry_msgs
   shape_msgs
+  process_msgs 
 )
 
 install(TARGETS scene_handler_node
   DESTINATION lib/${PROJECT_NAME}
 )
+
+
 
 install(DIRECTORY include
   DESTINATION share/${PROJECT_NAME}

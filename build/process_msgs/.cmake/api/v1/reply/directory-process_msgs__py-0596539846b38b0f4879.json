@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "process_msgs__py",
+		"source" : "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/process_msgs__py"
+	}
+}

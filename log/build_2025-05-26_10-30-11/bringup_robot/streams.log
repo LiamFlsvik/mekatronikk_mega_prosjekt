@@ -1,0 +1,29 @@
+[2.224s] Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/bringup_robot': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/bringup_robot build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/install.log --single-version-externally-managed install_data
+[2.476s] /home/michael/ros2_ws/.venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py:289: UserWarning: Unknown distribution option: 'tests_require'
+[2.477s]   warnings.warn(msg)
+[2.560s] running egg_info
+[2.574s] creating ../build/bringup_robot/bringup_robot.egg-info
+[2.574s] writing ../build/bringup_robot/bringup_robot.egg-info/PKG-INFO
+[2.575s] writing dependency_links to ../build/bringup_robot/bringup_robot.egg-info/dependency_links.txt
+[2.576s] writing requirements to ../build/bringup_robot/bringup_robot.egg-info/requires.txt
+[2.576s] writing top-level names to ../build/bringup_robot/bringup_robot.egg-info/top_level.txt
+[2.576s] writing manifest file '../build/bringup_robot/bringup_robot.egg-info/SOURCES.txt'
+[2.610s] reading manifest file '../build/bringup_robot/bringup_robot.egg-info/SOURCES.txt'
+[2.611s] writing manifest file '../build/bringup_robot/bringup_robot.egg-info/SOURCES.txt'
+[2.612s] running build
+[2.612s] running build_py
+[2.612s] creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/build/lib/bringup_robot
+[2.612s] copying bringup_robot/__init__.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/build/lib/bringup_robot
+[2.612s] running install
+[2.619s] running install_lib
+[2.634s] creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/lib/python3.12/site-packages/bringup_robot
+[2.634s] copying /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/build/lib/bringup_robot/__init__.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/lib/python3.12/site-packages/bringup_robot
+[2.635s] byte-compiling /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/lib/python3.12/site-packages/bringup_robot/__init__.py to __init__.cpython-312.pyc
+[2.635s] running install_data
+[2.636s] creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/share/ament_index/resource_index/packages
+[2.636s] copying resource/bringup_robot -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/share/ament_index/resource_index/packages
+[2.636s] copying package.xml -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/share/bringup_robot
+[2.636s] running install_egg_info
+[2.651s] Copying ../build/bringup_robot/bringup_robot.egg-info to /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/bringup_robot/lib/python3.12/site-packages/bringup_robot-0.0.0-py3.12.egg-info
+[2.652s] running install_scripts
+[2.683s] writing list of installed files to '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/bringup_robot/install.log'

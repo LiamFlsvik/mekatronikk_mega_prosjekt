@@ -1,0 +1,24 @@
+[2.148s] Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/usb_cam': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/prefix_override:/home/michael/ros2_ws/.venv/lib/python3.12/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.venv) /home/michael/ros2_ws/.venv/bin/python3.12 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/usb_cam build --build-base /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build install --record /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/install.log --single-version-externally-managed install_data
+[2.341s] /home/michael/ros2_ws/.venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py:289: UserWarning: Unknown distribution option: 'tests_require'
+[2.342s]   warnings.warn(msg)
+[2.432s] running egg_info
+[2.446s] writing ../build/usb_cam/usb_cam.egg-info/PKG-INFO
+[2.446s] writing dependency_links to ../build/usb_cam/usb_cam.egg-info/dependency_links.txt
+[2.446s] writing requirements to ../build/usb_cam/usb_cam.egg-info/requires.txt
+[2.446s] writing top-level names to ../build/usb_cam/usb_cam.egg-info/top_level.txt
+[2.477s] reading manifest file '../build/usb_cam/usb_cam.egg-info/SOURCES.txt'
+[2.478s] writing manifest file '../build/usb_cam/usb_cam.egg-info/SOURCES.txt'
+[2.479s] running build
+[2.479s] running build_py
+[2.479s] copying usb_cam/camera_begin.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build/lib/usb_cam
+[2.479s] copying usb_cam/__init__.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/build/lib/usb_cam
+[2.479s] running install
+[2.485s] running install_lib
+[2.500s] running install_data
+[2.501s] copying resource/usb_cam -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/ament_index/resource_index/packages
+[2.501s] copying package.xml -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/share/usb_cam
+[2.501s] running install_egg_info
+[2.515s] removing '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam-0.0.0-py3.12.egg-info' (and everything under it)
+[2.515s] Copying ../build/usb_cam/usb_cam.egg-info to /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/usb_cam/lib/python3.12/site-packages/usb_cam-0.0.0-py3.12.egg-info
+[2.516s] running install_scripts
+[2.545s] writing list of installed files to '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/usb_cam/install.log'

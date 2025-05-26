@@ -1,0 +1,12 @@
+{
+  "package_name": "process_msgs",
+  "non_idl_tuples": [
+    "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs:msg/Cube.msg",
+    "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs:msg/CubeArray.msg",
+    "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs:msg/KeyEvent.msg",
+    "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs:msg/SceneState.msg",
+    "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs:msg/Task.msg",
+    "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs:msg/TaskFeedback.msg",
+    "/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/process_msgs:srv/GetScene.srv"
+  ]
+}

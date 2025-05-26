@@ -1,0 +1,31 @@
+running egg_info
+creating ../build/process_handler/process_handler.egg-info
+writing ../build/process_handler/process_handler.egg-info/PKG-INFO
+writing dependency_links to ../build/process_handler/process_handler.egg-info/dependency_links.txt
+writing entry points to ../build/process_handler/process_handler.egg-info/entry_points.txt
+writing requirements to ../build/process_handler/process_handler.egg-info/requires.txt
+writing top-level names to ../build/process_handler/process_handler.egg-info/top_level.txt
+writing manifest file '../build/process_handler/process_handler.egg-info/SOURCES.txt'
+reading manifest file '../build/process_handler/process_handler.egg-info/SOURCES.txt'
+writing manifest file '../build/process_handler/process_handler.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/build/lib/process_handler
+copying process_handler/process_handler.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/build/lib/process_handler
+copying process_handler/__init__.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/build/lib/process_handler
+running install
+running install_lib
+creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/python3.12/site-packages/process_handler
+copying /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/build/lib/process_handler/process_handler.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/python3.12/site-packages/process_handler
+copying /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/build/lib/process_handler/__init__.py -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/python3.12/site-packages/process_handler
+byte-compiling /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/python3.12/site-packages/process_handler/process_handler.py to process_handler.cpython-312.pyc
+byte-compiling /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/python3.12/site-packages/process_handler/__init__.py to __init__.cpython-312.pyc
+running install_data
+creating /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/share/ament_index/resource_index/packages
+copying resource/process_handler -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/share/ament_index/resource_index/packages
+copying package.xml -> /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/share/process_handler
+running install_egg_info
+Copying ../build/process_handler/process_handler.egg-info to /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/python3.12/site-packages/process_handler-0.0.0-py3.12.egg-info
+running install_scripts
+Installing process_handler script to /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/process_handler/lib/process_handler
+writing list of installed files to '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_handler/install.log'

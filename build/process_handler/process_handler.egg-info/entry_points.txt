@@ -1,0 +1,2 @@
+[console_scripts]
+process_handler = process_handler.process_handler:main

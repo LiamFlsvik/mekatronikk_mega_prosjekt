@@ -1,0 +1,29 @@
+[0.016s] Invoking command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/scene_handler': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.venv) /usr/bin/cmake /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/scene_handler -DCMAKE_INSTALL_PREFIX=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/scene_handler
+[0.034s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.349s] -- Found rclcpp: 28.1.6 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.382s] -- Found rosidl_generator_c: 4.6.5 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.393s] -- Found rosidl_generator_cpp: 4.6.5 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.407s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.423s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.503s] -- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.505s] -- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.601s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.704s] [31mCMake Error at CMakeLists.txt:11 (find_package):
+[0.705s]   By not providing "Findmoveit_visual_tools.cmake" in CMAKE_MODULE_PATH this
+[0.705s]   project has asked CMake to find a package configuration file provided by
+[0.705s]   "moveit_visual_tools", but CMake did not find one.
+[0.705s] 
+[0.705s]   Could not find a package configuration file provided by
+[0.705s]   "moveit_visual_tools" with any of the following names:
+[0.705s] 
+[0.705s]     moveit_visual_toolsConfig.cmake
+[0.705s]     moveit_visual_tools-config.cmake
+[0.706s] 
+[0.706s]   Add the installation prefix of "moveit_visual_tools" to CMAKE_PREFIX_PATH
+[0.706s]   or set "moveit_visual_tools_DIR" to a directory containing one of the above
+[0.706s]   files.  If "moveit_visual_tools" provides a separate development package or
+[0.706s]   SDK, be sure it has been installed.
+[0.706s] 
+[0.706s] [0m
+[0.706s] -- Configuring incomplete, errors occurred!
+[0.716s] Invoked command in '/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/scene_handler' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.venv) /usr/bin/cmake /home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/scene_handler -DCMAKE_INSTALL_PREFIX=/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/install/scene_handler

@@ -1,0 +1,14 @@
+msg/Cube.idl
+msg/Cube.msg
+msg/CubeArray.idl
+msg/CubeArray.msg
+msg/KeyEvent.idl
+msg/KeyEvent.msg
+msg/SceneState.idl
+msg/SceneState.msg
+msg/Task.idl
+msg/Task.msg
+msg/TaskFeedback.idl
+msg/TaskFeedback.msg
+srv/GetScene.idl
+srv/GetScene.srv

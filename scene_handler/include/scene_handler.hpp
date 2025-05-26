@@ -255,21 +255,22 @@ class scene_handler: public rclcpp::Node{
       std::string name;
       std::vector<double> position{0, 0, 0, 0};
       std::vector<double> size{0.05, 0.05, 0.05}; 
+      double yaw = 0.0; 
       std::string color = "grey"; 
 
     Box(const std::string& name, const std::vector<double>& position, const std::vector<double>& size, const std::string& color)
             : name(name), position(position), size(size), color(color) {}
-    update(const std::vector<double>& new_position_, double yaw_) {
+    void update(const std::vector<double>& new_position_, double yaw_) {
         position = new_position_;
-        yaw_; // Update yaw
+        yaw = yaw_; // Update yaw
       }
     };
 
     std::vector<Box> virtual_boxes{
-      {"red box", {0.0, 0.0, 0.0, 0.0}, {0.05, 0.05, 0.05},     "red"},
-      {"blue box", {0.1, 0.1, 0.1, 0.0}, {0.05, 0.05, 0.05},    "blue"},
-      {"green box", {-0.1, -0.1, -0.1, 0.0}, {0.05, 0.05, 0.05},"green"}
-      {"yellow box", {0.2, 0.2, 0.2, 0.0}, {0.05, 0.05, 0.05},  "yellow"}
+      {"red box",    {0.0, 0.0, 0.0, 0.0},    {0.05, 0.05, 0.05},     "red"},
+      {"blue box",   {0.1, 0.1, 0.1, 0.0},    {0.05, 0.05, 0.05},    "blue"},
+      {"green box",  {-0.1, -0.1, -0.1, 0.0}, {0.05, 0.05, 0.05},   "green"},
+      {"yellow box", {0.2, 0.2, 0.2, 0.0},    {0.05, 0.05, 0.05},   "yellow"}};
       
 
 

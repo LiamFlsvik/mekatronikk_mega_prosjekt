@@ -84,14 +84,29 @@ class scene_handler: public rclcpp::Node{
 
   void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
     auto cubes = msg->cubes;
+    int i = 0;
+    if(scan_activated){
+      for (const auto& cube : cubes) {
+          auto cube_coordinates = matrix_transformations_.base_T_pixel({cube.position.x, cube.position.y});
+          if (cube.color == "red") {
+            remove_collision_object("red");
+            add_box("red",    {cube_coordinates[0], cube_coordinates[1],   0}, 0.0);
+          } else if (cube.color == "blue") {
+            remove_collision_object("blue");
+            add_box("blue",   {cube_coordinates[0], cube_coordinates[1],  0}, 0.0);
+          } else if (cube.color == "green") {
+            remove_collision_object("green");
+            add_box("green",  {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
+          } else if (cube.color == "yellow") {
+            remove_collision_object("yellow");
+            add_box("yellow", {cube_coordinates[0], cube_coordinates[1],0}, 0.0);
+          } else {
+            RCLCPP_WARN(this->get_logger(), "Unknown color: %s", cube.color.c_str());
+          }
 
-    for (const auto& cube : cubes) {
-        auto cube_coordinates = matrix_transformations_.base_T_pixel({cube.position.x, cube.position.y});
-        // Check if the box with the given color already exists
-        
-
-
-    } 
+          i +=1;
+      } 
+  }
 }
   void create_safe_zone(){
     add_collision_object("Robot base plate",{0.0,0.0,-0.015}, 0.0, {0.45, 0.25,0.015},"grey");
@@ -140,7 +155,6 @@ class scene_handler: public rclcpp::Node{
     moveit_msgs::msg::CollisionObject collision_object; 
     collision_object.header.frame_id = move_group_interface.getPlanningFrame();
     collision_object.id = object_name;
-    
     shape_msgs::msg::SolidPrimitive primitive;
     primitive.type = primitive.BOX;
     primitive.dimensions.resize(3);
@@ -241,7 +255,7 @@ class scene_handler: public rclcpp::Node{
 
     MoveGroupInterface move_group_interface;
     PlanningSceneInterface planning_scene_interface;
-
+    bool scan_activated = true;
     rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_diff_publisher;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscriber;
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;
@@ -252,14 +266,13 @@ class scene_handler: public rclcpp::Node{
     tf2_ros::TransformListener   tf_listener_;
 
     struct Box {
-      std::string name;
       std::vector<double> position{0, 0, 0, 0};
       std::vector<double> size{0.05, 0.05, 0.05}; 
       double yaw = 0.0; 
       std::string color = "grey"; 
 
-    Box(const std::string& name, const std::vector<double>& position, const std::vector<double>& size, const std::string& color)
-            : name(name), position(position), size(size), color(color) {}
+    Box(const std::vector<double>& position, const std::vector<double>& size, const std::string& color)
+            : position(position), size(size), color(color) {}
     void update(const std::vector<double>& new_position_, double yaw_) {
         position = new_position_;
         yaw = yaw_; // Update yaw
@@ -267,10 +280,10 @@ class scene_handler: public rclcpp::Node{
     };
 
     std::vector<Box> virtual_boxes{
-      {"red box",    {0.0, 0.0, 0.0, 0.0},    {0.05, 0.05, 0.05},     "red"},
-      {"blue box",   {0.1, 0.1, 0.1, 0.0},    {0.05, 0.05, 0.05},    "blue"},
-      {"green box",  {-0.1, -0.1, -0.1, 0.0}, {0.05, 0.05, 0.05},   "green"},
-      {"yellow box", {0.2, 0.2, 0.2, 0.0},    {0.05, 0.05, 0.05},   "yellow"}};
+      {{0.0, 0.0, 0.0, 0.0},    {0.05, 0.05, 0.05},     "red"},
+      {{0.1, 0.1, 0.1, 0.0},    {0.05, 0.05, 0.05},    "blue"},
+      {{-0.1, -0.1, -0.1, 0.0}, {0.05, 0.05, 0.05},   "green"},
+      {{0.2, 0.2, 0.2, 0.0},    {0.05, 0.05, 0.05},   "yellow"}};
       
 
 

@@ -53,8 +53,6 @@ void scan_workplace(){
 This code starts at a angle defined in the parameter scan_angle_start and 
 performs a half circle movement in the counter-clockwise and then the clockwise direction.
 */
-
-
   const double angle_increment = (M_PI / num_scan_points);
   double angle = scan_angle_start;
 

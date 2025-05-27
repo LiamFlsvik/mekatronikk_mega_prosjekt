@@ -47,10 +47,8 @@ class scene_handler: public rclcpp::Node{
   }
 
   void update_joint_states(sensor_msgs::msg::JointState::SharedPtr msg) {
-    joint_values = msg->position;
-    /*RCLCPP_INFO(this->get_logger(), "Updated joint states from topic: Joint 1:%f, Joint 2:%f, Joint 3:%f, Joint 4:%f, Joint 5:%f, Joint 6:%f",
-         joint_values[0], joint_values[1], joint_values[2], joint_values[3], joint_values[4], joint_values[5]);*/    
-   
+    //TODO: move this section to updated_cube_array, the joint_values are not used in this function, but rather used as a lazy way to update the x, y, z, roll  values of the robot base in the matrix_transformations class.
+    joint_values = msg->position;   
     // TF2-based lookup for tool0
     geometry_msgs::msg::TransformStamped transformStamped;
     try {
@@ -76,16 +74,15 @@ class scene_handler: public rclcpp::Node{
 
     double roll, pitch, yaw;
     tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
- 
 
     matrix_transformations_.set_orientation(roll, pitch, yaw);
     matrix_transformations_.set_position(x, y, z);
   }
 
+
   void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
     auto cubes = msg->cubes;
     for (const auto& cube : cubes) {
-        // Ensure base_T_pixel is returning valid coordinates
         auto cube_coordinates = matrix_transformations_.base_T_pixel({cube.position.x, cube.position.y});
         
         if (cube_coordinates.size() == 0) {
@@ -93,12 +90,37 @@ class scene_handler: public rclcpp::Node{
             RCLCPP_WARN(this->get_logger(), "Invalid coordinates for cube color: %s", cube.color.c_str());
             continue; // Skip this cube if the coordinates are invalid
         }
+        if (cube.color == "red"){
+          index = 0;
+        }
+        else if (cube.color == "blue"){
+          index = 1;
+        }
+        else if (cube.color == "green"){
+          index = 2;
+        }
+        else if (cube.color == "yellow"){
+          index = 3;
+        }
+        else {
+          RCLCPP_WARN(this->get_logger(), "Unknown color: %s", cube.color.c_str());
+          continue; // Skip this cube if the color is unknown
+        }
+
+        if(virtual_boxes[index].update(cube_coordinates, cube.yaw)){
+          std::vector<double> box_position = virtual_boxes[index].get_position();
+          remove_collision_object(cube.color);
+          add_box(cube.color, {box_position[0], box_position[1], 0}, virtual_boxes[index].get_yaw());
+          
+        }
         
-        if (cube.color == "red") {
+        /*if (cube.color == "red") {
+          if(virtual_boxes[0].)
+            virtual_boxes
             remove_collision_object("red");
             add_box("red",    {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
         } else if (cube.color == "blue") {
-            
+
             remove_collision_object("blue");
             add_box("blue",   {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
         } else if (cube.color == "green") {
@@ -109,7 +131,7 @@ class scene_handler: public rclcpp::Node{
             add_box("yellow", {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
         } else {
             RCLCPP_WARN(this->get_logger(), "Unknown color: %s", cube.color.c_str());
-        }
+        }*/
     }
 }
 
@@ -154,6 +176,7 @@ class scene_handler: public rclcpp::Node{
   void add_box(std::string name, std::vector<double> position, double yaw){
     add_collision_object(name, position, yaw, {box_size_x, box_size_y, box_size_z}, name);
   }
+  
 
   void add_collision_object(std::string object_name, std::vector<double> position, double yaw = 0.0,std::vector<double> box_size = {0.1, 0.1, 0.2}, std::string color_string="grey") {
     std_msgs::msg::ColorRGBA color = object_color(color_string);
@@ -275,21 +298,40 @@ class scene_handler: public rclcpp::Node{
       std::vector<double> size{0.05, 0.05, 0.05}; 
       double yaw = 0.0; 
       std::string color = "grey"; 
+      int id = 0; // Unique identifier for the box
 
-    Box(const std::vector<double>& position, const std::vector<double>& size, const std::string& color)
-            : position(position), size(size), color(color) {}
-    void update(const std::vector<double>& new_position_, double yaw_) {
-        position = new_position_;
-        yaw = yaw_; // Update yaw
+    Box(const std::vector<double> position, const std::vector<double> size, const std::string color, const int id)
+            : position(position), size(size), color(color), id(id) {}
+    bool update(const std::vector<double> new_position_, double yaw_) {
+        for (size_t i = 0; i < position.size(); ++i) {
+            if ((std::abs(position[i] - new_position_[i]) > 0.02 )|| (yaw - yaw_ > 0.02)) { // Threshold to avoid unnecessary updates
+                position[i] = new_position_[i];
+                yaw = yaw_;
+                return true;
+            }
+        }
+        return false; // No update needed
+      }
+     std::vector<double> get_position() const {
+        return position;
+      }
+      double get_yaw() const {
+        return yaw;
+      }
+      std::string get_color() const {
+        return color;
+      }
+      int get_id() const {
+        return id;
       }
     };
 
     std::vector<Box> virtual_boxes{
-      {{0.0, 0.0, 0.0, 0.0},    {0.05, 0.05, 0.05},     "red"},
-      {{0.1, 0.1, 0.1, 0.0},    {0.05, 0.05, 0.05},    "blue"},
-      {{-0.1, -0.1, -0.1, 0.0}, {0.05, 0.05, 0.05},   "green"},
-      {{0.2, 0.2, 0.2, 0.0},    {0.05, 0.05, 0.05},   "yellow"}};
-      
+      {{0.0, 0.0, 0.0, 0.0},    {0.05, 0.05, 0.05},     "red", 0},
+      {{0.1, 0.1, 0.1, 0.0},    {0.05, 0.05, 0.05},    "blue", 1},
+      {{-0.1, -0.1, -0.1, 0.0}, {0.05, 0.05, 0.05},   "green", 2},
+      {{0.2, 0.2, 0.2, 0.0},    {0.05, 0.05, 0.05},   "yellow",3}};
+
 
 
 };

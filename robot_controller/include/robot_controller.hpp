@@ -15,6 +15,7 @@
 #include <process_msgs/msg/scene_state.hpp>
 #include <process_msgs/msg/cube.hpp>
 #include <process_msgs/msg/cube_array.hpp>
+#include <rclcpp/executor.hpp>
 
 
 using robot_model_loader::RobotModelLoader;
@@ -32,12 +33,9 @@ public:
     move_group_interface(std::shared_ptr<rclcpp::Node>(this), PLANNING_GROUP),
     logger(rclcpp::get_logger("robot_controller_node")){
     
-    
-
-    
-
     //Parameters
     parameter_init();
+    
     
 
     parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
@@ -53,7 +51,7 @@ public:
     move_group_interface.setStartStateToCurrentState();
     RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
 
-    go_to_home_position();
+    scan_workplace();
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     task_sub_ = this->create_subscription<process_msgs::msg::Task>(
@@ -78,6 +76,7 @@ bool scan_workplace(){
 This code starts at a angle defined in the parameter scan_angle_start and 
 performs a half circle movement in the counter-clockwise and then the clockwise direction.
 */
+  allow_cube_updates=true;
   const double angle_increment = (M_PI / num_scan_points);
   double angle = scan_angle_start;
 
@@ -94,6 +93,7 @@ performs a half circle movement in the counter-clockwise and then the clockwise 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     move_group_interface.setStartStateToCurrentState();
     }
+  //allow_cube_updates = false;
   return true;
 }
 bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
@@ -116,14 +116,17 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       RCLCPP_INFO(logger, "%sPlan success%s", COLOR_GREEN, COLOR_RESET);
       RCLCPP_INFO(logger, "%sposition: x: %f, y: %f, z: %f %s",COLOR_GREEN, target_pose.position.x, target_pose.position.y, target_pose.position.z, COLOR_RESET);
       move_group_interface.execute(plan);
+      std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+      return true;
+
     } else {
-      RCLCPP_ERROR(logger, "Plan failed");
+      RCLCPP_ERROR(logger, "%sPlan failed%s", COLOR_RED, COLOR_RESET);
       return false;
     }
-    return success;
+    return false;
   }
  
-  bool go_to_home_position(std::vector<double> home_joints_= {1.57, -1.57, 1.57/2, -1.57/2, -1.57, 0})
+  bool go_to_home_position(std::vector<double> home_joints_= {1.57, -1.57, 0.785, -0.785, -1.57, 0})
   {
       std::vector<double> home_joints = home_joints_;
       move_group_interface.setJointValueTarget(home_joints);
@@ -132,7 +135,7 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       if (result == moveit::core::MoveItErrorCode::SUCCESS) {
           RCLCPP_INFO(logger, "%sHome position successfully reached%s", COLOR_GREEN, COLOR_RESET);
           move_group_interface.execute(plan);
-          std::this_thread::sleep_for(std::chrono::seconds(1));
+          std::this_thread::sleep_for(std::chrono::milliseconds(5000));
           return true;
       } else {
           RCLCPP_ERROR(logger, "Home planning failed");
@@ -140,6 +143,9 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       }
   }
   void update_cubes(process_msgs::msg::CubeArray::SharedPtr msg) {
+    if (!allow_cube_updates){
+      return;
+    }
     auto cubes = msg->cubes;
     for (const auto& cube : cubes) {
       RCLCPP_INFO(logger, "Received cube: color=%s, position=(%.2f, %.2f, %.2f), angle=%.2f",
@@ -333,14 +339,18 @@ private:
       if(msg->command == "MOVE_HOME") {
         feedback.success = go_to_home_position();
         feedback.message = feedback.success ? "Home reached" : "Move home failed";
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
       }
       else if(msg->command == "SCAN") {
         feedback.success = scan_workplace();
         feedback.message = feedback.success ? "Scan completed" : "Scan failed";
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
       }
       else if(msg->command == "POINT") {
         feedback.success = point_to_cubes();
         feedback.message = feedback.success ? "Pointing completed" : "Pointing failed";
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
       }
       else {
         feedback.success = false;
@@ -410,6 +420,7 @@ private:
   RobotModelLoader robot_model_loader_;
   moveit::core::RobotModelPtr robot_model_;
   moveit::core::RobotStatePtr robot_state_;
+  bool allow_cube_updates = true;
   std::string PLANNING_GROUP;
   moveit::core::JointModelGroup *joint_model_group_;
   MoveGroupInterface move_group_interface;

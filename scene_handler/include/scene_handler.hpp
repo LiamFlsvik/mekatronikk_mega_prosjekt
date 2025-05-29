@@ -15,6 +15,7 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
+
 using moveit::planning_interface::MoveGroupInterface;
 using moveit::planning_interface::PlanningSceneInterface;
 using moveit_msgs::msg::CollisionObject;
@@ -79,7 +80,6 @@ class scene_handler: public rclcpp::Node{
     matrix_transformations_.set_orientation(roll, pitch, yaw);
     matrix_transformations_.set_position(x, y, z);
   }
-  
 
   void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
     auto cubes = msg->cubes;
@@ -324,7 +324,7 @@ class scene_handler: public rclcpp::Node{
         if (abs(new_position_[1]) < 0.05){
           new_position_[1] = 0.05; // Ensure the y position is not too close to the robot base
         }
-        for (size_t i = 0; i < position.size(); ++i) {
+        for (size_t i = 0; i < 2; ++i) {
             if ((std::abs(position[i] - new_position_[i]) > 0.02 )|| (yaw - yaw_ > 0.02)) { // Threshold to avoid unnecessary updates
                 position[i] = new_position_[i];
                 yaw = yaw_;
@@ -353,7 +353,5 @@ class scene_handler: public rclcpp::Node{
       {{0.1, 0.1, 0.1, 0.0},    {0.05, 0.05, 0.05},    "blue", 1},
       {{-0.1, -0.1, -0.1, 0.0}, {0.05, 0.05, 0.05},   "green", 2},
       {{0.2, 0.2, 0.2, 0.0},    {0.05, 0.05, 0.05},   "yellow",3}};
-
-
 
 };

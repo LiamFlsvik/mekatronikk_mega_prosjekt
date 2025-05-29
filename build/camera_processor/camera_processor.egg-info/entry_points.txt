@@ -1,3 +1,0 @@
-[console_scripts]
-cube_tracker = camera_processor.cube_tracker:main
-red_cube_detector = camera_processor.red_cube_detector:main

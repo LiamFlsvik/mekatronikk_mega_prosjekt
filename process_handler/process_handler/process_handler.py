@@ -120,7 +120,7 @@ class ProcessHandler(Node):
         if new_phase == Phase.VERIFY_CUBES:
             self.evaluate_cubes()
         elif new_phase == Phase.DONE:
-            self.get_logger().info('Sequence finished – waiting for new start (press W)')
+            self.get_logger().info('Sequence finished, waiting for new start (press W)')
             self.phase = Phase.IDLE
 
     def send_task(self, command: str) -> None:

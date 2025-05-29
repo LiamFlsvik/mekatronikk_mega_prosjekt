@@ -1,7 +1,0 @@
-/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/rosidl_adapter/process_msgs:msg/Cube.idl
-/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/rosidl_adapter/process_msgs:msg/CubeArray.idl
-/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/rosidl_adapter/process_msgs:msg/KeyEvent.idl
-/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/rosidl_adapter/process_msgs:msg/SceneState.idl
-/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/rosidl_adapter/process_msgs:msg/Task.idl
-/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/rosidl_adapter/process_msgs:msg/TaskFeedback.idl
-/home/michael/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/build/process_msgs/rosidl_adapter/process_msgs:srv/GetScene.idl

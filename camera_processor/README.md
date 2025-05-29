@@ -112,12 +112,12 @@ ros2 run camera_processor cube_tracker
 ---
 
 cd ~/ros2_ws
-colcon build --packages-select camera_processor
+colcon build --packages-select camera_processor process_msgs
 source install/setup.bash
 ros2 launch camera_processor camera_tracking.launch.py
 
 
-colcon build --packages-select camera_processor
+colcon build --packages-select camera_processor process_msgs
 source install/setup.bash
 ros2 launch camera_processor camera_tracking.launch.py
 

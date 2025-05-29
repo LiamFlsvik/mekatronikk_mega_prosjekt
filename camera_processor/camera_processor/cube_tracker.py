@@ -36,31 +36,40 @@ class CubeTracker(Node):
 
         self.hsv_profiles = [ # Defines different HSV profiles for cube detection. Each profile made for different lighting conditions
         
-        {   # Lights on
-            'name': 'lights_on',
-            'ranges': {
-                'red':    {'hmin': 0, 'smin': 43, 'vmin': 196, 'hmax': 19, 'smax': 255, 'vmax': 255},
-                'blue':   {'hmin': 87, 'smin': 72, 'vmin': 0, 'hmax': 173, 'smax': 255, 'vmax': 255},
-                'yellow': {'hmin': 20, 'smin': 25, 'vmin': 224, 'hmax': 72, 'smax': 255, 'vmax': 255},
-                'green':  {'hmin': 69, 'smin': 71, 'vmin': 0, 'hmax': 103, 'smax': 255, 'vmax': 255},
-            }
-        },
+        #{   # Lights on
+        #    'name': 'lights_on',
+        #    'ranges': {
+        #        'red':    {'hmin': 0, 'smin': 43, 'vmin': 196, 'hmax': 19, 'smax': 255, 'vmax': 255},
+        #        'blue':   {'hmin': 87, 'smin': 72, 'vmin': 0, 'hmax': 173, 'smax': 255, 'vmax': 255},
+        #        'yellow': {'hmin': 20, 'smin': 25, 'vmin': 224, 'hmax': 72, 'smax': 255, 'vmax': 255},
+        #        'green':  {'hmin': 69, 'smin': 71, 'vmin': 0, 'hmax': 103, 'smax': 255, 'vmax': 255},
+        #    }
+        #},
         {   # Lights off
             'name': 'lights_off',
             'ranges': {
-                'red':   {'hmin': 123, 'smin': 118, 'vmin': 150, 'hmax': 179, 'smax': 255, 'vmax': 255},
-                'blue':  {'hmin': 75, 'smin': 135, 'vmin': 35, 'hmax': 152, 'smax': 255, 'vmax': 142},
-                'yellow': {'hmin': 13, 'smin': 119, 'vmin': 0, 'hmax': 65, 'smax': 255, 'vmax': 255},
-                'green': {'hmin': 50, 'smin': 99, 'vmin': 0, 'hmax': 95, 'smax': 255, 'vmax': 255},
+                'red':   {'hmin': 131, 'smin': 64, 'vmin': 67, 'hmax': 179, 'smax': 255, 'vmax': 255},
+                'blue':  {'hmin': 85, 'smin': 95, 'vmin': 0, 'hmax': 159, 'smax': 255, 'vmax': 255},
+                'yellow': {'hmin': 15, 'smin': 98, 'vmin': 0, 'hmax': 50, 'smax': 255, 'vmax': 255},
+                'green': {'hmin': 55, 'smin': 81, 'vmin': 0, 'hmax': 94, 'smax': 255, 'vmax': 255},
             }
         },
-        {   # Semi-controlled lighting
-            'name': 'semi_controlled',
+        #{   # Semi-controlled lighting
+        #    'name': 'semi_controlled',
+        #    'ranges': {
+        #        'red':   {'hmin': 0, 'smin': 45, 'vmin': 255, 'hmax': 179, 'smax': 155, 'vmax': 255},
+        #        'blue':  {'hmin': 105, 'smin': 88, 'vmin': 0, 'hmax': 166, 'smax': 255, 'vmax': 255},
+        #        'yellow': {'hmin': 7, 'smin': 81, 'vmin': 0, 'hmax': 47, 'smax': 255, 'vmax': 255},
+        #        'green': {'hmin': 34, 'smin': 137, 'vmin': 192, 'hmax': 104, 'smax': 255, 'vmax': 255},
+        #    }
+        #},
+        {   # Lys på 2.0
+            'name': 'lights_on',
             'ranges': {
-                'red':   {'hmin': 0, 'smin': 45, 'vmin': 255, 'hmax': 179, 'smax': 155, 'vmax': 255},
-                'blue':  {'hmin': 105, 'smin': 88, 'vmin': 0, 'hmax': 166, 'smax': 255, 'vmax': 255},
-                'yellow': {'hmin': 7, 'smin': 81, 'vmin': 0, 'hmax': 47, 'smax': 255, 'vmax': 255},
-                'green': {'hmin': 34, 'smin': 137, 'vmin': 192, 'hmax': 104, 'smax': 255, 'vmax': 255},
+                'red':   {'hmin': 145, 'smin': 44, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255},
+                'blue':  {'hmin': 103, 'smin': 34, 'vmin': 0, 'hmax': 161, 'smax': 255, 'vmax': 255},
+                'yellow': {'hmin': 19, 'smin': 13, 'vmin': 242, 'hmax': 50, 'smax': 255, 'vmax': 255},
+                'green': {'hmin': 53, 'smin': 85, 'vmin': 0, 'hmax': 95, 'smax': 255, 'vmax': 255},
             }
         }
     ]

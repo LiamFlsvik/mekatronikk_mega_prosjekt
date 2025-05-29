@@ -17,16 +17,12 @@ class CubeTracker(Node):
     def __init__(self):
         super().__init__('cube_tracker')
 
-        # Subscribers & Publishers
         self.sub = self.create_subscription(Image,'/camera/image_raw',self.image_callback,10)
-        # Single publisher for all cube detections
         self.pub_cubes = self.create_publisher(CubeArray,'/cubes/detections',10)
 
-        # CV setup
         self.bridge = CvBridge()
         self.color_finder = ColorFinder(False)
         
-        # Startup variables
         self.first_image_processed = False
         self.start_time = time.time()
 
@@ -74,7 +70,6 @@ class CubeTracker(Node):
         }
     ]
         
-        # Logging
         self.last_log = {c: 0.0 for c in ['red', 'blue', 'yellow', 'green', 'start']} 
         self.log_interval = 2.5 # Log interval in seconds
 

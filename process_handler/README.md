@@ -1,4 +1,4 @@
-# **Process Handler**
+# **process_handler**
 
 `process_handler` is a state machine that controls the robot’s task sequence.  
 Pressing **W** starts the process:

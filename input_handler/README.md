@@ -36,6 +36,12 @@ source install/setup.bash
 ros2 run keyboard_input_handler keyboard_input_handler
 ```
 
+Or via the provided launch file (loads `config/parameters.yaml` automatically):
+
+```bash
+ros2 launch input_handler input_handler.launch.py
+```
+
 ---
 
 ### Troubleshooting

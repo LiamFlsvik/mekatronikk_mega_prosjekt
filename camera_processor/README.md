@@ -1,126 +1,82 @@
-# **Camera Processor**
+# **camera_processor**
 
-Is the node that takes the image from `USB_CAM` and uses `CUBETRACKER` to track the different colored cubes (Red, Blue, Green and Yellow). This system uses ROS 2 and OpenCV to identify the cubes and publishes their position, color and rotation into `CubeArray`
----
+`camera_processor` contains **Cube Tracker**, a vision node that finds the four coloured cubes in each camera frame and publishes their pixel‑space pose as a `CubeArray`.
 
-## Functions
-
-* Tracks the colored cubes given their HSV parameters
-* Visualises the cubes with a rotated bounding box
-* Publishes position, color, rotation and size
-* Lets you calibrate both the camera matrix and color tracker
-
+The node had multiple HSV ranges (tuned for several lighting profiles), picks the largest contour of each colour, computes the center coordinates and rotation, and publishes an array of `process_msgs/Cube` messages at around 40 Hz.
 
 ---
 
-## Dependencies
+### Functionality
 
-### 1. Clone and install USB_CAM driver:
+1. **Image intake** – subscribes to `/camera/image_raw` (`sensor_msgs/Image`) and converts to OpenCV BGR.  
+2. **Colour masking** – for every colour (*red, blue, yellow, green*) it iterates through a list of HSV profiles until at least one mask yields a contour.  
+3. **Pose extraction** – from the biggest contour it computes:
+   * centre pixel `(cx, cy)`  
+   * rotation angle (deg → rad) using `cv2.minAreaRect`.  
+4. **Publishing** – pushes the whole set as a single `CubeArray` on `/cubes/detections`.  
+5. **Diagnostics** – draws bounding boxes, writes a snapshot to `resource/cube_snapshot.png`, and shows a live “Cube Tracking” window for quick tuning.
 
-```bash
-cd ~/ros2_ws/src
-git clone https://github.com/ros-drivers/usb_cam.git
-cd ~/ros2_ws
-rosdep install --from-paths src --ignore-src -r -y
-colcon build --packages-select usb_cam
-```
-
----
-
-### 2. Create a virtual environment and install Python-dependencies
-
-```bash
-cd ~/ros2_ws
-python3.12 -m venv .venv
-source ~/ros2_ws/.venv/bin/activate
-pip install "cvzone" "opencv-python" "numpy<2" "pyyaml" "em" "catkin_pkg" "lark"
-```
+Execution is throttled to **40 fps** and delayed **2 s** after node start to let the camera settle.
 
 ---
 
-### 3. Calibration of camera
+### Interfaces
 
-Run the following command and calibrate the camera with a chess board pattern A4 paper.
-LINK to a more in depth calibration tutorial: https://docs.ros.org/en/ros2_packages/rolling/api/camera_calibration/doc/tutorial_mono.html
-
-```bash
-ros2 run camera_calibration cameracalibrator --size 8x6 --square 0.025 image:=/camera/image_raw camera:=/camera --no-service-check
-```
-
-> The saved calibration data will then have to be moved to `/resource/ost.yaml`.
+| Direction   | Topic               | Type                | Purpose                          |
+|-------------|---------------------|---------------------|----------------------------------|
+| **Subscribes** | `/camera/image_raw` | `sensor_msgs/Image` | Raw camera frames (USB cam)      |
+| **Publishes**  | `/cubes/detections` | `process_msgs/CubeArray` | Pixel positions and angles of cubes |
 
 ---
 
-### 4. Calibration of HSV-values:
+### HSV Profiles
 
-Use the following line of commands down below. 
-
-```bash
-cd ~/ros2_ws/mega_prosjekt/src/mekatronikk_mega_prosjekt/camera_processor/resource
-source /opt/ros/jazzy/setup.bash
-source ~/ros2_ws/.venv/bin/activate
-python3 calibrate_color.py
-```
-
-Drag the HSV parameters untill you only see the desired cube. Press CTRL+C. And copy paste the HSV value from the terminal into the desired color range like below:
-
-```bash
-self.color_ranges = { # Define HSV color ranges for different cubes (Semi controlled lighting)
-            'red':   {'hmin': 35, 'smin': 4, 'vmin': 255, 'hmax': 179, 'smax': 241, 'vmax': 255},
-            'blue':  {'hmin': 100, 'smin': 102, 'vmin': 90, 'hmax': 114, 'smax': 224, 'vmax': 255},
-            'yellow': {'hmin': 14, 'smin': 55, 'vmin': 164, 'hmax': 42, 'smax': 194, 'vmax': 255},
-            'green': {'hmin': 37, 'smin': 82, 'vmin': 86, 'hmax': 82, 'smax': 157, 'vmax': 170},
+The tracker carries several built‑in HSV tables so you can switch lighting
+```python
+hsv_profiles = [
+    {   # Lights off profile
+        'name': 'lights_off',
+        'ranges': {
+            'red':    {'hmin':131,'smin':64,'vmin':67,'hmax':179,'smax':255,'vmax':255},
+            'blue':   {'hmin':85 ,'smin':95,'vmin':0,'hmax':159,'smax':255,'vmax':255},
+            'yellow': {'hmin':15 ,'smin':98,'vmin':0,'hmax':50 ,'smax':255,'vmax':255},
+            'green':  {'hmin':55 ,'smin':81,'vmin':0,'hmax':94 ,'smax':255,'vmax':255},
         }
+    },
+    ...
+]
 ```
+
+Use the on‑screen window together with `rqt_reconfigure` to fine‑tune new ranges.
 
 ---
 
-### Build and run
+### Build & Run
 
-
-## Find the correct camera:
 ```bash
-v4l2-ctl --list-devices
-```
-> Then update `/dev/videoX` to your desired camera in `XXXX`
-
-
-## Run `cube_tracker` directly
-```bash
-cd ~/ros2_ws/mega_prosjekt
-source /opt/ros/jazzy/setup.bash
-source ~/ros2_ws/.venv/bin/activate
-colcon build --packages-select camera_processor process_msgs
+colcon build --packages-select camera_processor
 source install/setup.bash
+```
+
+```bash
 ros2 run camera_processor cube_tracker
 ```
 
+Or start tracker using Launch file:
 
+```bash
+ros2 launch camera_processor camera_tracking.launch.py
+```
 
 ---
 
-## Published messages
+### Troubleshooting
 
-| Topic                   | Type                     | Beskrivelse                                                  |
-| ----------------------- | ------------------------ | ------------------------------------------------------------ |
-| `/red_cube_position`    | `geometry_msgs/Point`    | Position, area and rotation for red cube                     |
-| `/blue_cube_position`   | `geometry_msgs/Point`    | Position, area and rotation for blue cube                    |
-| `/yellow_cube_position` | `geometry_msgs/Point`    | Position, area and rotation for yellow cube                  |
-| `/green_cube_position`  | `geometry_msgs/Point`    | Position, area and rotation for green cube                   |
-| `/cubes/detections`     | `process_msgs/CubeArray` | Full data per cube (position, color, rotation, size)         |
+| Symptom | Possible Fix |
+|---------|--------------|
+| No window appears | Make sure you have a desktop session and OpenCV built with GUI support (`sudo apt install cvzone`). |
+| Cube colours bleed together | Tighten the HSV `smin`/`vmin`. |
+| Contours flicker | Enable a single lighting profile that best matches your environment to avoid profile hopping. |
+| `cv_bridge` errors | Re‑build the workspace and source the correct `setup.bash`. |
 
 ---
-
-cd ~/ros2_ws
-colcon build --packages-select camera_processor process_msgs
-source install/setup.bash
-ros2 launch camera_processor camera_tracking.launch.py
-
-
-colcon build --packages-select camera_processor process_msgs
-source install/setup.bash
-ros2 launch camera_processor camera_tracking.launch.py
-
-colcon build --packages-select process_msgs
-source install/setup.bash
-ros2 topic echo /cubes/detections

@@ -1,0 +1,7 @@
+usb_cam:
+  ros__parameters:
+    video_device: "/dev/video0"
+    framerate: 30.0
+    image_width: 640
+    image_height: 480
+    pixel_format: "yuyv"

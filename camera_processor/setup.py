@@ -1,7 +1,10 @@
 from setuptools import find_packages, setup
+from glob import glob
 import os
 import sys
+
 package_name = 'camera_processor'
+
 if 'VIRTUAL_ENV' in os.environ:
     sys.executable = os.path.join(os.environ['VIRTUAL_ENV'], 'bin', 'python')
 
@@ -12,16 +15,16 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'launch'), ['launch/camera_tracking.launch.py']),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
+        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
-
     install_requires=[
-    'setuptools',
-    'cvzone',
-    'opencv-python',
-    'numpy<2',
-    'pyyaml'
-],
+        'setuptools',
+        'cvzone',
+        'opencv-python',
+        'numpy<2',
+        'pyyaml',
+    ],
     zip_safe=True,
     maintainer='lhf',
     maintainer_email='liam.folsviks@gmail.com',
@@ -29,8 +32,8 @@ setup(
     license='TODO: License declaration',
     entry_points={
         'console_scripts': [
-    'red_cube_detector = camera_processor.red_cube_detector:main',
-    'cube_tracker = camera_processor.cube_tracker:main',
-],
+            'red_cube_detector = camera_processor.red_cube_detector:main',
+            'cube_tracker = camera_processor.cube_tracker:main',
+        ],
     },
 )

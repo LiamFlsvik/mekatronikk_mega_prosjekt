@@ -112,6 +112,9 @@ class ProcessHandler(Node):
             Phase.MOVE_HOME: 'MOVE_HOME',
             Phase.SCAN:      'SCAN',
             Phase.POINT:     'POINT',
+            Phase.VERIFY_CUBES:     'VERIFY_CUBES',
+            Phase.POINT:     'POINT',
+            Phase.DONE:      'DONE',
         }
 
         if new_phase in task_map:

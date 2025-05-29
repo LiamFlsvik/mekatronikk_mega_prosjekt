@@ -3,14 +3,15 @@ robot_controller_node:
     planning_pipeline_id: "pilz_industrial_motion_planner"
     planner_id: "PTP"
     planning_group: "ur_manipulator"
-    scan_radius: 0.4
-    scan_height: 0.35
-    num_scan_points: 8
+    scan_radius: 0.3
+    scan_height: 0.45
+    num_scan_points: 3
     camera_height: 0.119
     camera_width: 0.135
     camera_length: 0.09
     camera_offset_height: 0.00
     camera_offset_width: 0.03375 
-    scan_angle_start: 0.0
-    cube_point_offset: 0.1
+    scan_angle_start: 0.9
+    scan_angle_end: 2.1
+    cube_point_offset: 0.07
     

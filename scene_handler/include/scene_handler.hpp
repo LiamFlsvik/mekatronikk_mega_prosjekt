@@ -11,10 +11,10 @@
 #include "process_msgs/msg/cube.hpp"
 #include "process_msgs/msg/cube_array.hpp"
 #include <geometry_msgs/msg/pose_stamped.hpp>
-
+#include <chrono>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
-
+#include <process_msgs/msg/task.hpp>
 
 using moveit::planning_interface::MoveGroupInterface;
 using moveit::planning_interface::PlanningSceneInterface;
@@ -42,9 +42,15 @@ class scene_handler: public rclcpp::Node{
     cube_array_subscriber = this->create_subscription<process_msgs::msg::CubeArray>(
       "cubes/detections", 10, std::bind(&scene_handler::update_cube_array, this, std::placeholders::_1));
 
+    task_sub_ = this->create_subscription<process_msgs::msg::Task>(
+       "/task_command", 10, std::bind(&scene_handler::handle_task, this, std::placeholders::_1));
+
     planning_scene_diff_publisher = this->create_publisher<moveit_msgs::msg::PlanningScene>("planning_scene", 10);
 
     cube_array_publisher = this->create_publisher<process_msgs::msg::CubeArray>("cubes/virtual_boxes", 10);
+    timer_ = this->create_wall_timer(
+     std::chrono::milliseconds(400), std::bind(&scene_handler::publish_virtual_boxes, this));
+
     create_safe_zone();
   }
 
@@ -66,7 +72,7 @@ class scene_handler: public rclcpp::Node{
     double x  = transformStamped.transform.translation.x;
     double y  = transformStamped.transform.translation.y;
     double z  = transformStamped.transform.translation.z;
-
+   
     double qx = transformStamped.transform.rotation.x;
     double qy = transformStamped.transform.rotation.y;
     double qz = transformStamped.transform.rotation.z;
@@ -80,8 +86,22 @@ class scene_handler: public rclcpp::Node{
     matrix_transformations_.set_orientation(roll, pitch, yaw);
     matrix_transformations_.set_position(x, y, z);
   }
+  void handle_task(const process_msgs::msg::Task::SharedPtr msg) {
+   
+     const std::string &command = msg->command;
+    if(command == "SCAN"){
+      allow_cube_updates = true;
+      RCLCPP_INFO(this->get_logger(), "Cube updates are enabled.");
+    } else {
+      allow_cube_updates = false;
+      RCLCPP_INFO(this->get_logger(), "Cube updates are disabled.");
+    }
+  }
 
   void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
+    if (!allow_cube_updates){
+      return;
+    }
     auto cubes = msg->cubes;
     for (const auto& cube : cubes) {
         auto cube_coordinates = matrix_transformations_.base_T_pixel({cube.position.x, cube.position.y});
@@ -109,41 +129,27 @@ class scene_handler: public rclcpp::Node{
         }
 
         if(virtual_boxes[index].update(cube_coordinates, cube.angle)){
-          std::vector<double> box_position = virtual_boxes[index].get_position();
-          remove_collision_object(cube.color);
-          add_box(cube.color, {box_position[0], box_position[1], 0}, virtual_boxes[index].get_yaw());
+          if(cubes_found[index]){
+            return;
+          } else {
+            cubes_found[index] = false;
+            std::vector<double> box_position = virtual_boxes[index].get_position_filtered();
+            remove_collision_object(cube.color);
+            add_box(cube.color, {box_position[0], box_position[1], 0}, virtual_boxes[index].get_yaw());
+          }
         }  
-        
-        /*if (cube.color == "red") {
-          if(virtual_boxes[0].)
-            virtual_boxes
-            remove_collision_object("red");
-            add_box("red",    {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
-        } else if (cube.color == "blue") {
-
-            remove_collision_object("blue");
-            add_box("blue",   {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
-        } else if (cube.color == "green") {
-            remove_collision_object("green");
-            add_box("green",  {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
-        } else if (cube.color == "yellow") {
-            remove_collision_object("yellow");
-            add_box("yellow", {cube_coordinates[0], cube_coordinates[1], 0}, 0.0);
-        } else {
-            RCLCPP_WARN(this->get_logger(), "Unknown color: %s", cube.color.c_str());
-        }*/
     }
 }
 
   void publish_virtual_boxes() {
     process_msgs::msg::CubeArray cube_array_msg;
-    for (const auto& box : virtual_boxes) {
+    for (size_t i = 0; i < virtual_boxes.size(); i++) {
       process_msgs::msg::Cube cube_msg;
-      cube_msg.position.x = box.get_position()[0];
-      cube_msg.position.y = box.get_position()[1];
+      cube_msg.position.x = virtual_boxes[i].get_position_filtered()[0];
+      cube_msg.position.y = virtual_boxes[i].get_position_filtered()[1];
       cube_msg.position.z = 0.0; // Assuming z is always 0 for virtual boxes
-      cube_msg.angle = box.get_yaw();
-      cube_msg.color = box.get_color();
+      cube_msg.angle = virtual_boxes[i].get_yaw();
+      cube_msg.color = virtual_boxes[i].get_color();
       cube_array_msg.cubes.push_back(cube_msg);
     }
     cube_array_publisher->publish(cube_array_msg);
@@ -249,6 +255,11 @@ class scene_handler: public rclcpp::Node{
 
     this->declare_parameter<double>("box_size_z", 0.05);
     box_size_z= this->get_parameter("box_size_z").as_double();
+
+    this->declare_parameter<double>("camera_filter_position_filter_strenght", 0.9);
+    for(size_t i = 0; i < virtual_boxes.size(); i++){
+      virtual_boxes[i].set_filter_strength(this->get_parameter("camera_filter_position_filter_strenght").as_double());
+    }
   }
     rcl_interfaces::msg::SetParametersResult on_parameter_change(const std::vector<rclcpp::Parameter> &params){
       rcl_interfaces::msg::SetParametersResult result;
@@ -273,6 +284,13 @@ class scene_handler: public rclcpp::Node{
         } else if(name == "camera_y_offset"){
           matrix_transformations_.set_camera_offset_x(param.as_double());
           RCLCPP_INFO(this->get_logger(), "Camera y offset set to: %f", param.as_double());
+        } else if (name == "camera_filter_position_filter_strenght") {
+          double alpha = param.as_double();
+          for (size_t i = 0; i < virtual_boxes.size(); ++i) {
+            virtual_boxes[i].set_filter_strength(alpha);
+          }
+          RCLCPP_INFO(this->get_logger(),
+                      "Camera position filter strength set to: %f", alpha);
         } else {
           result.successful = false;
           result.reason = "Unsupported parameter: " + name;
@@ -289,13 +307,12 @@ class scene_handler: public rclcpp::Node{
     const double working_table_y = 0.80;
     const double working_table_z = 0.01;
 
-
     int object_counter = 0;
 
     std::vector<double> joint_values;
 
     matrix_transformations matrix_transformations_;
-    //box_handler box_handler_;
+    std::vector<bool> cubes_found{false,false,false,false};
 
     MoveGroupInterface move_group_interface;
     PlanningSceneInterface planning_scene_interface;
@@ -307,9 +324,16 @@ class scene_handler: public rclcpp::Node{
     rclcpp::Subscription<process_msgs::msg::CubeArray>::SharedPtr cube_array_subscriber;   
     tf2_ros::Buffer              tf_buffer_;
     tf2_ros::TransformListener   tf_listener_;
+    rclcpp::TimerBase::SharedPtr timer_;
+    std::string task_type = "HOME";
+
+    rclcpp::Subscription<process_msgs::msg::Task>::SharedPtr task_sub_;
+    bool allow_cube_updates = false; // Flag to allow or disallow cube updates
 
     struct Box {
-      std::vector<double> position{0, 0, 0, 0};
+      std::vector<double> position{-0.05, -0.05, 0, 0};
+      std::vector<double> position_filtered = position;
+      double camera_filter_position_filter_strenght = 0.9; // Filter coefficient for position updates
       std::vector<double> size{0.05, 0.05, 0.05}; 
       double yaw = 0.0; 
       std::string color = "grey"; 
@@ -324,25 +348,29 @@ class scene_handler: public rclcpp::Node{
         if (abs(new_position_[1]) < 0.05){
           new_position_[1] = 0.05; // Ensure the y position is not too close to the robot base
         }
+
         for (size_t i = 0; i < 2; ++i) {
-            if ((std::abs(position[i] - new_position_[i]) > 0.02 )|| (yaw - yaw_ > 0.02)) { // Threshold to avoid unnecessary updates
-                position[i] = new_position_[i];
-                yaw = yaw_;
-                return true;
-            }
-            
+            //if ((std::abs(position[i] - new_position_[i]) > 0.02 )|| (yaw - yaw_ > 0.02))) { // Threshold to avoid unnecessary updates
+          position[i] = new_position_[i];
+          position_filtered[i] = new_position_[i]*(1-camera_filter_position_filter_strenght) + camera_filter_position_filter_strenght * position_filtered[i]; // Apply low-pass filter
+          yaw = yaw_;
         }
-        return false; // No update needed
+        return true;
+        
       }
-     std::vector<double> get_position() const {
-        return position;
+     std::vector<double> get_position_filtered() const {
+        return position_filtered;
       }
       double get_yaw() const {
         return yaw;
       }
+      void set_filter_strength(double new_alpha) {
+        camera_filter_position_filter_strenght = new_alpha;
+      }
       std::string get_color() const {
         return color;
       }
+      
       int get_id() const {
         return id;
       }

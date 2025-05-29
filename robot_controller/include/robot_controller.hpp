@@ -39,6 +39,7 @@ public:
     
 
     parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
+
     cube_array_subscriber = this->create_subscription<process_msgs::msg::CubeArray>(
       "cubes/virtual_boxes", 10, std::bind(&robot_controller::update_cubes, this, std::placeholders::_1));
 
@@ -51,7 +52,7 @@ public:
     move_group_interface.setStartStateToCurrentState();
     RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
 
-    scan_workplace();
+
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     task_sub_ = this->create_subscription<process_msgs::msg::Task>(
@@ -68,7 +69,6 @@ public:
       [this](const process_msgs::msg::SceneState::SharedPtr msg) {
         last_scene_ = msg;
       });
-   
   }
 
 bool scan_workplace(){
@@ -76,27 +76,29 @@ bool scan_workplace(){
 This code starts at a angle defined in the parameter scan_angle_start and 
 performs a half circle movement in the counter-clockwise and then the clockwise direction.
 */
-  allow_cube_updates=true;
-  const double angle_increment = (M_PI / num_scan_points);
+  
+  //allow_cube_updates=true;
+  const double angle_increment = (scan_angle_end-scan_angle_start)/num_scan_points;
   double angle = scan_angle_start;
 
-  for (int i = 0; i < round(num_scan_points)*2; ++i) {
+  for (int i = 0; i < round(num_scan_points); ++i) { 
     if (i < num_scan_points){
-      angle += angle_increment;
-    } else {
-      angle -= angle_increment;
-    }
+      angle += angle_increment*i;
+    } 
     double x = scan_radius * cos(angle);
     double y = scan_radius * sin(angle);
-
-    move_robot(x,y,scan_height,0,0,0);
+    move_robot(x,y,scan_height);
+    RCLCPP_INFO(logger, "Angle: %f",angle);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     move_group_interface.setStartStateToCurrentState();
     }
+    go_to_home_position();
   //allow_cube_updates = false;
+  //publish virtual boxes2
+  
   return true;
 }
-bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
+bool move_robot(double x, double y, double z, double roll = 0, double pitch = -M_PI, double yaw = M_PI){
   //End effector roll pitch and yaw:
     tf2::Quaternion quat;
     quat.setRPY(roll, pitch, yaw);
@@ -115,8 +117,9 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     if (success) {
       RCLCPP_INFO(logger, "%sPlan success%s", COLOR_GREEN, COLOR_RESET);
       RCLCPP_INFO(logger, "%sposition: x: %f, y: %f, z: %f %s",COLOR_GREEN, target_pose.position.x, target_pose.position.y, target_pose.position.z, COLOR_RESET);
+      RCLCPP_INFO(logger, "%sorientation: roll: %f, pitch: %f, yaw: %f %s",COLOR_GREEN, roll, pitch, yaw, COLOR_RESET);
       move_group_interface.execute(plan);
-      std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
       return true;
 
     } else {
@@ -143,9 +146,6 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       }
   }
   void update_cubes(process_msgs::msg::CubeArray::SharedPtr msg) {
-    if (!allow_cube_updates){
-      return;
-    }
     auto cubes = msg->cubes;
     for (const auto& cube : cubes) {
       RCLCPP_INFO(logger, "Received cube: color=%s, position=(%.2f, %.2f, %.2f), angle=%.2f",
@@ -243,6 +243,9 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     //The height over the cubes when pointing
       this->declare_parameter<double>("cube_point_offset", 0.1);
       cube_point_offset = this->get_parameter("cube_point_offset").as_double();
+    //Scan angle end
+      this->declare_parameter<double>("scan_angle_end", M_PI);
+      scan_angle_end = this->get_parameter("scan_angle_end").as_double();
 
       move_group_interface.setPlanningPipelineId("pilz_industrial_motion_planner");
       move_group_interface.setPlannerId("PTP");
@@ -311,7 +314,10 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
         } else if (name == "cube_point_offset"){
           cube_point_offset = param.as_double();
           RCLCPP_INFO(logger, "Updated cube_point_offset to: %f", cube_point_offset);
-        } 
+        } else if (name == "scan_angle_end"){
+          scan_angle_end = param.as_double();
+          RCLCPP_INFO(logger, "Updated scan_angle_end to: %f", scan_angle_end);
+        }
         else {
           result.successful = false;
           result.reason = "Unsupported parameter: " + name;
@@ -347,10 +353,10 @@ private:
         feedback.message = feedback.success ? "Scan completed" : "Scan failed";
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
       }
-      else if(msg->command == "POINT") {
+      else if(msg->command == "VERIFY_CUBES") {
         feedback.success = point_to_cubes();
         feedback.message = feedback.success ? "Pointing completed" : "Pointing failed";
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
       }
       else {
         feedback.success = false;
@@ -374,9 +380,12 @@ private:
       double y = cube.position[1];
       double z = camera_height + cube_point_offset;
       double roll = 0;
-      double yaw = cube.angle;
-      double pitch = 0;
-      move_robot(x,y,scan_height,0,0,0);
+      double pitch = -M_PI; 
+      double yaw = cube.angle+M_PI;
+      //double roll = 0;
+      //double yaw = cube.angle;
+      //double pitch = 0;
+      move_robot(x,y,scan_height,roll, pitch, yaw);
 
       if (!move_robot(x, y, z, roll, pitch, yaw)) {
         RCLCPP_ERROR(logger, "Failed to point to %s cube at (%f, %f)", cube.color.c_str(), x, y);
@@ -384,6 +393,8 @@ private:
       }
       std::this_thread::sleep_for(std::chrono::seconds(2));
     }
+    go_to_home_position();
+    RCLCPP_INFO(logger, "Pointing to cubes completed successfully.");
     return true;
   }
    
@@ -401,7 +412,7 @@ private:
   double scan_angle_start = 0;
   double camera_offset_width = 0.0;
   double cube_point_offset = 0.1;
-
+  double scan_angle_end = 1.57;
   struct Cube {
     std::string color;
     std::vector<double> position;

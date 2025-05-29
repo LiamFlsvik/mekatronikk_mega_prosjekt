@@ -7,11 +7,11 @@ class matrix_transformations {
     public:
 
     matrix_transformations(){
-        camera_parameter_matrix = (cv::Mat_<double>(3,3) << -530.47292,    0.0,         357.1054,
-                                                            0.0,           530.51882,  258.43042,
+        camera_parameter_matrix = (cv::Mat_<double>(3,3) << -540.724419,    0.0,         340.842488,
+                                                            0.0,           538.763253,  243.986418,
                                                             0.0,           0.0,          1.0);
 
-        distortion_coefficients = (cv::Mat_<double>(1,5) << 0.073635, -0.121473, -0.000465, 0.015358, 0.00);
+        distortion_coefficients = (cv::Mat_<double>(1,5) << 0.087939, -0.140634, 0.002966, 0.008088, 0.00);
     } 
     
     // Camera pixel coordinates to base coordinates:

@@ -1,34 +1,34 @@
 from launch import LaunchDescription
-from moveit_configs_utils import MoveItConfigsBuilder
-
-#The launch config 
-#
-#
-launch_arguments = {
-    "robot_ip": "xxx.yyy.zzz.www",
-    "use_fake_hardware": "true",
-    "gripper": "robotiq_2f_85",
-    "dof": "7",
-}
-
-# Load the robot configuration
-moveit_config = (
-    MoveItConfigsBuilder(
-        "gen3", package_name="kinova_gen3_7dof_robotiq_2f_85_moveit_config"
-    )
-    .robot_description(mappings=launch_arguments)
-    .trajectory_execution(file_path="config/moveit_controllers.yaml")
-    .planning_scene_monitor(
-        publish_robot_description=True, publish_robot_description_semantic=True
-    )
-    .planning_pipelines(
-        pipelines=["ompl", "stomp", "pilz_industrial_motion_planner"]
-    )
-    .to_moveit_configs()
-)
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+import os
 
 def generate_launch_description():
-    
-    moveit_nodes = Node(
-
+    input_handler_launch = os.path.join(
+        get_package_share_directory('input_handler'), 'launch', 'input_handler.launch.py'
     )
+
+    process_handler_launch = os.path.join(
+        get_package_share_directory('process_handler'), 'launch', 'process_handler.launch.py'
+    )
+
+    camera_tracking_launch = os.path.join(
+        get_package_share_directory('camera_processor'), 'launch', 'camera_tracking.launch.py'
+    )
+
+    robot_controller_launch = os.path.join(
+        get_package_share_directory('robot_controller'), 'launch', 'robot_controller.launch.py'
+    )
+
+    scene_handler_launch = os.path.join(
+        get_package_share_directory('scene_handler'), 'launch', 'scene_handler.launch.py'
+    )
+
+    return LaunchDescription([
+        IncludeLaunchDescription(PythonLaunchDescriptionSource(input_handler_launch)),
+        IncludeLaunchDescription(PythonLaunchDescriptionSource(process_handler_launch)),
+        IncludeLaunchDescription(PythonLaunchDescriptionSource(camera_tracking_launch)),
+        IncludeLaunchDescription(PythonLaunchDescriptionSource(robot_controller_launch)),
+        IncludeLaunchDescription(PythonLaunchDescriptionSource(scene_handler_launch)),
+    ])

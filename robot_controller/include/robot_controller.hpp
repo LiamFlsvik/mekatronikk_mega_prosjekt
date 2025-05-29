@@ -119,7 +119,7 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = -M
       RCLCPP_INFO(logger, "%sposition: x: %f, y: %f, z: %f %s",COLOR_GREEN, target_pose.position.x, target_pose.position.y, target_pose.position.z, COLOR_RESET);
       RCLCPP_INFO(logger, "%sorientation: roll: %f, pitch: %f, yaw: %f %s",COLOR_GREEN, roll, pitch, yaw, COLOR_RESET);
       move_group_interface.execute(plan);
-      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
       return true;
 
     } else {
@@ -138,7 +138,7 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = -M
       if (result == moveit::core::MoveItErrorCode::SUCCESS) {
           RCLCPP_INFO(logger, "%sHome position successfully reached%s", COLOR_GREEN, COLOR_RESET);
           move_group_interface.execute(plan);
-          std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+          std::this_thread::sleep_for(std::chrono::milliseconds(1000));
           return true;
       } else {
           RCLCPP_ERROR(logger, "Home planning failed");
@@ -345,18 +345,18 @@ private:
       if(msg->command == "MOVE_HOME") {
         feedback.success = go_to_home_position();
         feedback.message = feedback.success ? "Home reached" : "Move home failed";
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
       }
       else if(msg->command == "SCAN") {
         feedback.success = scan_workplace();
         feedback.message = feedback.success ? "Scan completed" : "Scan failed";
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
       }
       else if(msg->command == "VERIFY_CUBES") {
         feedback.success = point_to_cubes();
         feedback.message = feedback.success ? "Pointing completed" : "Pointing failed";
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
       }
       else {
         feedback.success = false;
@@ -379,15 +379,13 @@ private:
       double x = cube.position[0];
       double y = cube.position[1];
       double z = camera_height + cube_point_offset;
-      double roll = 0;
-      double pitch = -M_PI; 
-      double yaw = cube.angle+M_PI;
+    
       //double roll = 0;
       //double yaw = cube.angle;
       //double pitch = 0;
-      move_robot(x,y,scan_height,roll, pitch, yaw);
+      move_robot(x,y,scan_height);
 
-      if (!move_robot(x, y, z, roll, pitch, yaw)) {
+      if (!move_robot(x, y, z)) {
         RCLCPP_ERROR(logger, "Failed to point to %s cube at (%f, %f)", cube.color.c_str(), x, y);
         return false;
       }

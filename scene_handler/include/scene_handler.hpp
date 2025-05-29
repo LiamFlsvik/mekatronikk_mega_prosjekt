@@ -49,7 +49,7 @@ class scene_handler: public rclcpp::Node{
 
     cube_array_publisher = this->create_publisher<process_msgs::msg::CubeArray>("cubes/virtual_boxes", 10);
     timer_ = this->create_wall_timer(
-     std::chrono::milliseconds(400), std::bind(&scene_handler::publish_virtual_boxes, this));
+     std::chrono::milliseconds(200), std::bind(&scene_handler::publish_virtual_boxes, this));
 
     create_safe_zone();
   }
@@ -58,6 +58,7 @@ class scene_handler: public rclcpp::Node{
     //TODO: move this section to updated_cube_array, the joint_values are not used in this function, but rather used as a lazy way to update the x, y, z, roll  values of the robot base in the matrix_transformations class.
     joint_values = msg->position;   
     // TF2-based lookup for tool0
+    
     geometry_msgs::msg::TransformStamped transformStamped;
     try {
       transformStamped = tf_buffer_.lookupTransform(
@@ -127,7 +128,6 @@ class scene_handler: public rclcpp::Node{
           RCLCPP_WARN(this->get_logger(), "Unknown color: %s", cube.color.c_str());
           continue; // Skip this cube if the color is unknown
         }
-
         if(virtual_boxes[index].update(cube_coordinates, cube.angle)){
           if(cubes_found[index]){
             return;
@@ -135,6 +135,8 @@ class scene_handler: public rclcpp::Node{
             cubes_found[index] = false;
             std::vector<double> box_position = virtual_boxes[index].get_position_filtered();
             remove_collision_object(cube.color);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
             add_box(cube.color, {box_position[0], box_position[1], 0}, virtual_boxes[index].get_yaw());
           }
         }  
@@ -157,9 +159,7 @@ class scene_handler: public rclcpp::Node{
 
   void create_safe_zone(){
     add_collision_object("Robot base plate",{0.0,0.0,-0.015}, 0.0, {0.45, 0.25,0.015},"grey");
-    add_collision_object("Working scene",{0.0, 0.25, -working_table_z-0.015}, 0.0,{working_table_x, working_table_y, working_table_z}, "grey");
-    add_collision_object("Virtual wall 1",{working_table_x,0,0}, 0.0, {0.03,1.0,1.0}, "grey");
-    
+    add_collision_object("Working scene",{0.0, 0.25, working_table_z}, 0.0,{working_table_x, working_table_y, -working_table_z}, "grey");
   }
 
   static std_msgs::msg::ColorRGBA object_color(std::string color = "green") {
@@ -305,7 +305,7 @@ class scene_handler: public rclcpp::Node{
   
     const double working_table_x = 0.85;
     const double working_table_y = 0.80;
-    const double working_table_z = 0.01;
+    const double working_table_z =-0.016;
 
     int object_counter = 0;
 

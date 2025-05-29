@@ -1,3 +1,3 @@
 string               color               # red, yellow, blue, green
-geometry_msgs/Point  position
-float32              angle               # angle in degrees or radians (your choice)
+geometry_msgs/Point  position            # relative to base
+float32              angle               # radians 

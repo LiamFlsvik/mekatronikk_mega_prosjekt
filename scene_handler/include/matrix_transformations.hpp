@@ -44,7 +44,7 @@ class matrix_transformations {
                 0.0,            0.0,    0.0,          1.0;
 
         
-        Eigen::Matrix<double,4,4> tool_T_camera = calculate_DHMatrix(0.1, 0.0, 0.08, 0.0);
+        Eigen::Matrix<double,4,4> tool_T_camera = calculate_DHMatrix(0.1, 0.0, 0.08, 0); //calculate_DHMatrix(0.1, 0.0, 0.08, 0.0);
         //Camera to base
         Eigen::Matrix<double,4,4> base_T_camera = base_T_tool * tool_T_camera;
 
@@ -76,7 +76,7 @@ class matrix_transformations {
     //Position in [m]
     void set_position(double x, double y, double z) {
         position = {x, y, z};
-        depth = -z;
+        depth = -z; //-z.
     }
     void set_camera_offset_x(double x_offset) {
         camera_x_offset = x_offset;

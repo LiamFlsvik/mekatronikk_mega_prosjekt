@@ -12,4 +12,5 @@ robot_controller_node:
     camera_offset_height: 0.00
     camera_offset_width: 0.03375 
     scan_angle_start: 0.0
+    cube_point_offset: 0.1
     

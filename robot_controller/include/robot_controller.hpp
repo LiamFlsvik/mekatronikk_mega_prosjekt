@@ -13,10 +13,12 @@
 #include <process_msgs/msg/task.hpp>
 #include <process_msgs/msg/task_feedback.hpp>
 #include <process_msgs/msg/scene_state.hpp>
+#include <process_msgs/msg/cube.hpp>
+#include <process_msgs/msg/cube_array.hpp>
 
-//TODO: Service
-using RobotModelLoader = robot_model_loader::RobotModelLoader;
-using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
+
+using robot_model_loader::RobotModelLoader;
+using moveit::planning_interface::MoveGroupInterface;
 
 class robot_controller : public rclcpp::Node
 {
@@ -29,7 +31,31 @@ public:
     PLANNING_GROUP("ur_manipulator"),
     move_group_interface(std::shared_ptr<rclcpp::Node>(this), PLANNING_GROUP),
     logger(rclcpp::get_logger("robot_controller_node")){
-  
+    
+    
+
+    
+
+    //Parameters
+    parameter_init();
+    
+
+    parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
+    cube_array_subscriber = this->create_subscription<process_msgs::msg::CubeArray>(
+      "cubes/virtual_boxes", 10, std::bind(&robot_controller::update_cubes, this, std::placeholders::_1));
+
+
+    RCLCPP_INFO(logger,"%sRobot Planning Pipeline:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlanningPipelineId().c_str(),COLOR_RESET);
+    RCLCPP_INFO(logger,"%sRobot Planning Id:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlannerId().c_str(),COLOR_RESET);
+
+    add_camera_collision();
+    RCLCPP_INFO(logger, "%sAdded camera collision%s",COLOR_BLUE,COLOR_RESET);
+    move_group_interface.setStartStateToCurrentState();
+    RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
+
+    go_to_home_position();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
     task_sub_ = this->create_subscription<process_msgs::msg::Task>(
       "/task_command", 10,
       [this](const process_msgs::msg::Task::SharedPtr msg) {
@@ -44,27 +70,7 @@ public:
       [this](const process_msgs::msg::SceneState::SharedPtr msg) {
         last_scene_ = msg;
       });
-
-    //Parameters
-    parameter_init();
-
-    parameter_cb_handle = this->add_on_set_parameters_callback(std::bind(&robot_controller::on_parameter_change, this, std::placeholders::_1));
-
-
-    //publish to joint states
-    //joint_state_publisher = this->create_publisher<sensor_msgs::msg::JointState>("current_joint_angles", 10);
-    //timer_ = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&robot_controller::publishJointStates, this));
-
-    RCLCPP_INFO(logger,"%sRobot Planning Pipeline:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlanningPipelineId().c_str(),COLOR_RESET);
-    RCLCPP_INFO(logger,"%sRobot Planning Id:%s %s%s%s",COLOR_GREEN, COLOR_RESET,COLOR_BLUE,move_group_interface.getPlannerId().c_str(),COLOR_RESET);
-
-    add_camera_collision();
-
-    move_group_interface.setStartStateToCurrentState();
-
-    RCLCPP_INFO(logger, "%sScanning workplace%s", COLOR_BLUE, COLOR_RESET);
-    //scan_workplace();
-    //go_to_home_position({-M_PI/2, -M_PI/2, 0.0, 0.0, 0.0, 0.0});
+   
   }
 
 bool scan_workplace(){
@@ -84,13 +90,12 @@ performs a half circle movement in the counter-clockwise and then the clockwise 
     double x = scan_radius * cos(angle);
     double y = scan_radius * sin(angle);
 
-    move_robot(x,y,scan_height,0,-M_PI,-angle);
+    move_robot(x,y,scan_height,0,0,0);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     move_group_interface.setStartStateToCurrentState();
     }
   return true;
 }
-// This code can be called to move the robots endeffector to a desired location with a specified roll, pitch and yaw.
 bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0, double yaw = -M_PI/2){
   //End effector roll pitch and yaw:
     tf2::Quaternion quat;
@@ -106,20 +111,19 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     move_group_interface.setPoseTarget(target_pose);
   //create plan
     moveit::planning_interface::MoveGroupInterface::Plan plan;
-    auto const sucess = static_cast<bool>(move_group_interface.plan(plan)); 
-    if (sucess) {
+    auto const success = static_cast<bool>(move_group_interface.plan(plan)); 
+    if (success) {
       RCLCPP_INFO(logger, "%sPlan success%s", COLOR_GREEN, COLOR_RESET);
       RCLCPP_INFO(logger, "%sposition: x: %f, y: %f, z: %f %s",COLOR_GREEN, target_pose.position.x, target_pose.position.y, target_pose.position.z, COLOR_RESET);
       move_group_interface.execute(plan);
-      
     } else {
       RCLCPP_ERROR(logger, "Plan failed");
       return false;
     }
-    return sucess;
+    return success;
   }
  
-  bool go_to_home_position(std::vector<double> home_joints_= {1.57, -1.57, 1.57, -1.57, -1.57, 0})
+  bool go_to_home_position(std::vector<double> home_joints_= {1.57, -1.57, 1.57/2, -1.57/2, -1.57, 0})
   {
       std::vector<double> home_joints = home_joints_;
       move_group_interface.setJointValueTarget(home_joints);
@@ -135,6 +139,30 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
           return false;
       }
   }
+  void update_cubes(process_msgs::msg::CubeArray::SharedPtr msg) {
+    auto cubes = msg->cubes;
+    for (const auto& cube : cubes) {
+      RCLCPP_INFO(logger, "Received cube: color=%s, position=(%.2f, %.2f, %.2f), angle=%.2f",
+                  cube.color.c_str(), cube.position.x, cube.position.y, cube.position.z, cube.angle);
+      if (cube.color == "red") {
+        virtual_boxes[0].position = {cube.position.x, cube.position.y};
+        virtual_boxes[0].angle = cube.angle;
+      } else if (cube.color == "yellow") {
+        virtual_boxes[1].position = {cube.position.x, cube.position.y};
+        virtual_boxes[1].angle = cube.angle;
+      } else if (cube.color == "blue") {
+        virtual_boxes[2].position = {cube.position.x, cube.position.y};
+        virtual_boxes[2].angle = cube.angle;
+      } else if (cube.color == "green") {
+        virtual_boxes[3].position = {cube.position.x, cube.position.y};
+        virtual_boxes[3].angle = cube.angle;
+      } else {
+        RCLCPP_WARN(logger, "Unknown cube color: %s", cube.color.c_str());
+      }
+    }
+  }
+
+
 
   void add_camera_collision(){
     moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
@@ -150,7 +178,7 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
     geometry_msgs::msg::Pose camera_pose;
     camera_pose.orientation.w = 1.0;
     camera_pose.position.x = 0.0;
-    camera_pose.position.y = -camera_offset_width;//camera_width/4;
+    camera_pose.position.y = -camera_offset_width;
     camera_pose.position.z = camera_offset+ camera_height/2; 
 
 
@@ -206,6 +234,10 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
       this->declare_parameter<double>("scan_angle_start",0.0);
       scan_angle_start = this->get_parameter("scan_angle_start").as_double();
 
+    //The height over the cubes when pointing
+      this->declare_parameter<double>("cube_point_offset", 0.1);
+      cube_point_offset = this->get_parameter("cube_point_offset").as_double();
+
       move_group_interface.setPlanningPipelineId("pilz_industrial_motion_planner");
       move_group_interface.setPlannerId("PTP");
     }
@@ -252,6 +284,7 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
           camera_width = param.as_double();
           RCLCPP_INFO(logger, "Updated camera_width to: %f", camera_width);
           add_camera_collision();
+
         } else if (name == "camera_length") {
           camera_length = param.as_double();
           add_camera_collision();
@@ -261,11 +294,18 @@ bool move_robot(double x, double y, double z, double roll = 0, double pitch = 0,
           camera_offset = param.as_double();
           add_camera_collision();
           RCLCPP_INFO(logger, "Updated camera_offset to: %f", camera_offset);
-        
+
         } else if (name == "scan_angle_start") {
           scan_angle_start = param.as_double();
           RCLCPP_INFO(logger, "Updated scan_angle_start to: %f", scan_angle_start);
-        }
+        } else if (name == "camera_offset_width") {
+          camera_offset_width = param.as_double();
+          RCLCPP_INFO(logger, "updated camera_offset_width to %f", camera_offset_width);
+
+        } else if (name == "cube_point_offset"){
+          cube_point_offset = param.as_double();
+          RCLCPP_INFO(logger, "Updated cube_point_offset to: %f", cube_point_offset);
+        } 
         else {
           result.successful = false;
           result.reason = "Unsupported parameter: " + name;
@@ -299,7 +339,7 @@ private:
         feedback.message = feedback.success ? "Scan completed" : "Scan failed";
       }
       else if(msg->command == "POINT") {
-        feedback.success = scan_workplace();
+        feedback.success = point_to_cubes();
         feedback.message = feedback.success ? "Pointing completed" : "Pointing failed";
       }
       else {
@@ -314,24 +354,31 @@ private:
     feedback_pub_->publish(feedback);
   }
 
- /* bool point_to_cubes() {
-    if(!last_scene_ || last_scene_->cubes.empty()) {
-      RCLCPP_WARN(logger, "No cubes to point at");
-      return false;
-    }
+  bool point_to_cubes() {
+    for (const auto& cube : virtual_boxes) {
+      if (cube.position.empty()) {
+        RCLCPP_WARN(logger, "Cube coordinates are empty, skipping.");
+        continue;
+      }
+      double x = cube.position[0];
+      double y = cube.position[1];
+      double z = camera_height + cube_point_offset;
+      double roll = 0;
+      double yaw = cube.angle;
+      double pitch = 0;
+      move_robot(x,y,scan_height,0,0,0);
 
-    for(const auto& cube : last_scene_->cubes) {
-      if(!move_robot(cube.pose.position.x,
-                     cube.pose.position.y,
-                     cube.pose.position.z)) {
+      if (!move_robot(x, y, z, roll, pitch, yaw)) {
+        RCLCPP_ERROR(logger, "Failed to point to %s cube at (%f, %f)", cube.color.c_str(), x, y);
         return false;
       }
-      std::this_thread::sleep_for(std::chrono::seconds(1));
+      std::this_thread::sleep_for(std::chrono::seconds(2));
     }
     return true;
-  }*/
+  }
    
 private:
+
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;
   double scan_radius = 0.4;
   double scan_height = 0.4;
@@ -343,8 +390,23 @@ private:
   double camera_offset = 0.01;
   double scan_angle_start = 0;
   double camera_offset_width = 0.0;
+  double cube_point_offset = 0.1;
+
+  struct Cube {
+    std::string color;
+    std::vector<double> position;
+    double angle;
+  };
+
+  std::vector<Cube> virtual_boxes = {
+    {"red", {0.0, 0.0}, 0.0},
+    {"yellow", {0.0, 0.0}, 0.0},
+    {"blue", {0.0, 0.0}, 0.0},
+    {"green", {0.0, 0.0}, 0.0}
+  };
+  
+
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher;
-  std::vector<std::vector<std::pair<double, double>>> poses = {{{0.1, 0.0}, {0.0, 0.1}}, {{-0.1, 0.0}, {0.0, -0.1}}};
   RobotModelLoader robot_model_loader_;
   moveit::core::RobotModelPtr robot_model_;
   moveit::core::RobotStatePtr robot_state_;
@@ -355,7 +417,9 @@ private:
   rclcpp::TimerBase::SharedPtr startup_timer_;
   rclcpp::Logger logger;
   tf2::Quaternion quat;
+  process_msgs::msg::CubeArray::SharedPtr cube_array_;
   rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Subscription<process_msgs::msg::CubeArray>::SharedPtr cube_array_subscriber;
   rclcpp::Subscription<process_msgs::msg::Task>::SharedPtr task_sub_;
   rclcpp::Publisher<process_msgs::msg::TaskFeedback>::SharedPtr feedback_pub_;
   rclcpp::Subscription<process_msgs::msg::SceneState>::SharedPtr scene_sub_;

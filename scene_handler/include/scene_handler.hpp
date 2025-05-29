@@ -43,6 +43,7 @@ class scene_handler: public rclcpp::Node{
 
     planning_scene_diff_publisher = this->create_publisher<moveit_msgs::msg::PlanningScene>("planning_scene", 10);
 
+    cube_array_publisher = this->create_publisher<process_msgs::msg::CubeArray>("cubes/virtual_boxes", 10);
     create_safe_zone();
   }
 
@@ -78,13 +79,13 @@ class scene_handler: public rclcpp::Node{
     matrix_transformations_.set_orientation(roll, pitch, yaw);
     matrix_transformations_.set_position(x, y, z);
   }
-
+  
 
   void update_cube_array(process_msgs::msg::CubeArray::SharedPtr msg) {
     auto cubes = msg->cubes;
     for (const auto& cube : cubes) {
         auto cube_coordinates = matrix_transformations_.base_T_pixel({cube.position.x, cube.position.y});
-        
+        int index = 0;
         if (cube_coordinates.size() == 0) {
             // Check if cube_coordinates is empty
             RCLCPP_WARN(this->get_logger(), "Invalid coordinates for cube color: %s", cube.color.c_str());
@@ -107,12 +108,11 @@ class scene_handler: public rclcpp::Node{
           continue; // Skip this cube if the color is unknown
         }
 
-        if(virtual_boxes[index].update(cube_coordinates, cube.yaw)){
+        if(virtual_boxes[index].update(cube_coordinates, cube.angle)){
           std::vector<double> box_position = virtual_boxes[index].get_position();
           remove_collision_object(cube.color);
           add_box(cube.color, {box_position[0], box_position[1], 0}, virtual_boxes[index].get_yaw());
-          
-        }
+        }  
         
         /*if (cube.color == "red") {
           if(virtual_boxes[0].)
@@ -135,9 +135,25 @@ class scene_handler: public rclcpp::Node{
     }
 }
 
+  void publish_virtual_boxes() {
+    process_msgs::msg::CubeArray cube_array_msg;
+    for (const auto& box : virtual_boxes) {
+      process_msgs::msg::Cube cube_msg;
+      cube_msg.position.x = box.get_position()[0];
+      cube_msg.position.y = box.get_position()[1];
+      cube_msg.position.z = 0.0; // Assuming z is always 0 for virtual boxes
+      cube_msg.angle = box.get_yaw();
+      cube_msg.color = box.get_color();
+      cube_array_msg.cubes.push_back(cube_msg);
+    }
+    cube_array_publisher->publish(cube_array_msg);
+  }
+
   void create_safe_zone(){
     add_collision_object("Robot base plate",{0.0,0.0,-0.015}, 0.0, {0.45, 0.25,0.015},"grey");
     add_collision_object("Working scene",{0.0, 0.25, -working_table_z-0.015}, 0.0,{working_table_x, working_table_y, working_table_z}, "grey");
+    add_collision_object("Virtual wall 1",{working_table_x,0,0}, 0.0, {0.03,1.0,1.0}, "grey");
+    
   }
 
   static std_msgs::msg::ColorRGBA object_color(std::string color = "green") {
@@ -246,7 +262,6 @@ class scene_handler: public rclcpp::Node{
           box_size_x = param.as_double();
           RCLCPP_INFO(this->get_logger(), "Box size x set to: %s", param.as_string().c_str());
         } else if (name == "box_size_y") {
-          if()
           box_size_y = param.as_double();
           RCLCPP_INFO(this->get_logger(), "Box size y set to: %s", param.as_string().c_str());
         } else if(name == "box_size_z"){
@@ -287,7 +302,7 @@ class scene_handler: public rclcpp::Node{
     rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_diff_publisher;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscriber;
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_cb_handle;
-
+    rclcpp::Publisher<process_msgs::msg::CubeArray>::SharedPtr cube_array_publisher;
     CollisionObject collision_object;
     rclcpp::Subscription<process_msgs::msg::CubeArray>::SharedPtr cube_array_subscriber;   
     tf2_ros::Buffer              tf_buffer_;
@@ -302,13 +317,20 @@ class scene_handler: public rclcpp::Node{
 
     Box(const std::vector<double> position, const std::vector<double> size, const std::string color, const int id)
             : position(position), size(size), color(color), id(id) {}
-    bool update(const std::vector<double> new_position_, double yaw_) {
+    bool update(std::vector<double> new_position_, double yaw_) {
+        if (abs(new_position_[0]) < 0.05) {
+          new_position_[0] = 0.05; // Ensure the x position is not too close to the robot base
+        }
+        if (abs(new_position_[1]) < 0.05){
+          new_position_[1] = 0.05; // Ensure the y position is not too close to the robot base
+        }
         for (size_t i = 0; i < position.size(); ++i) {
             if ((std::abs(position[i] - new_position_[i]) > 0.02 )|| (yaw - yaw_ > 0.02)) { // Threshold to avoid unnecessary updates
                 position[i] = new_position_[i];
                 yaw = yaw_;
                 return true;
             }
+            
         }
         return false; // No update needed
       }

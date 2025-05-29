@@ -4,15 +4,9 @@ This repository contains a **complete MoveIt 2 + ROS 2 pipeline** that lets a
 
 ---
 
-<p align="center">
-  <video src="images/example_run_dark.mp4" width="640" autoplay loop muted playsinline></video>
-  <br/>
-</p>
+<video src="images/example_run_dark.mp4" width="720" controls></video>
 
-<p align="center">
-  <video src="images/example_run_light.mp4" width="640" autoplay loop muted playsinline></video>
-  <br/>
-</p>
+<video src="images/example_run_light.mp4" width="720" controls></video>
 
 ---
 

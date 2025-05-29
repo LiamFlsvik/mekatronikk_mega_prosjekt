@@ -159,7 +159,7 @@ class scene_handler: public rclcpp::Node{
 
   void create_safe_zone(){
     add_collision_object("Robot base plate",{0.0,0.0,-0.015}, 0.0, {0.45, 0.25,0.015},"grey");
-    add_collision_object("Working scene",{0.0, 0.25, working_table_z}, 0.0,{working_table_x, working_table_y, -working_table_z}, "grey");
+    add_collision_object("Working scene",{0.0, 0.25, working_table_z-0.015}, 0.0,{working_table_x, working_table_y, -working_table_z}, "grey");
   }
 
   static std_msgs::msg::ColorRGBA object_color(std::string color = "green") {

@@ -7,11 +7,11 @@ class matrix_transformations {
     public:
 
     matrix_transformations(){
-        camera_parameter_matrix = (cv::Mat_<double>(3,3) << -540.724419,    0.0,         340.842488,
-                                                            0.0,           538.763253,  243.986418,
-                                                            0.0,           0.0,          1.0);
+        camera_parameter_matrix = (cv::Mat_<double>(3,3) << -550.074787, 0.000000, 313.652175,
+                                                            0.000000, 548.618685, 262.686364,
+                                                            0.000000, 0.000000, 1.000000);
 
-        distortion_coefficients = (cv::Mat_<double>(1,5) << 0.087939, -0.140634, 0.002966, 0.008088, 0.00);
+        distortion_coefficients = (cv::Mat_<double>(1,5) << 0.161813, -0.106074, 0.003609, -0.009673, 0.000000);
     } 
     
     // Camera pixel coordinates to base coordinates:
@@ -24,8 +24,8 @@ class matrix_transformations {
         cv::undistortPoints(distored_points, undistorted_points, camera_parameter_matrix, distortion_coefficients);
 
         //Normalized camera coordinates:
-        double x =  camera_x_offset + undistorted_points[0].x * depth;
-        double y =  camera_y_offset + undistorted_points[0].y * depth;
+        double x =  -camera_x_offset + undistorted_points[0].x * depth;
+        double y =  -camera_y_offset + undistorted_points[0].y * depth;
         double z =  depth;
         
         return Eigen::Vector3d(x, y, z);
@@ -44,7 +44,7 @@ class matrix_transformations {
                 0.0,            0.0,    0.0,          1.0;
 
         
-        Eigen::Matrix<double,4,4> tool_T_camera = calculate_DHMatrix(0.1, 0.0, 0.08, 0); //calculate_DHMatrix(0.1, 0.0, 0.08, 0.0);
+        Eigen::Matrix<double,4,4> tool_T_camera = calculate_DHMatrix(0.1, M_PI, 0.08, 0); //calculate_DHMatrix(0.1, 0.0, 0.08, 0.0);
         //Camera to base
         Eigen::Matrix<double,4,4> base_T_camera = base_T_tool * tool_T_camera;
 
@@ -76,7 +76,7 @@ class matrix_transformations {
     //Position in [m]
     void set_position(double x, double y, double z) {
         position = {x, y, z};
-        depth = -z; //-z.
+        depth = z-0.09; //-z.
     }
     void set_camera_offset_x(double x_offset) {
         camera_x_offset = x_offset;

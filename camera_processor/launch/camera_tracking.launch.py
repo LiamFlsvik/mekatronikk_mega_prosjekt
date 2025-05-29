@@ -7,7 +7,7 @@ def generate_launch_description():
     config_file = os.path.join(
         get_package_share_directory('camera_processor'),
         'config',
-        'usb_cam_params.yaml'
+        'parameters.yaml'
     )
 
     return LaunchDescription([

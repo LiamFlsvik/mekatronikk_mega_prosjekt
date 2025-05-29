@@ -4,9 +4,10 @@ This repository contains a **complete MoveIt 2 + ROS 2 pipeline** that lets a
 
 ---
 
-<video src="images/example_run_dark.mp4" width="720" controls></video>
+[EXAMPLE VIDEO RUN DARK](images/example_run_dark.mp4)
 
-<video src="images/example_run_light.mp4" width="720" controls></video>
+[EXAMPLE VIDEO RUN LIGHT](images/example_run_light.mp4)
+
 
 ---
 

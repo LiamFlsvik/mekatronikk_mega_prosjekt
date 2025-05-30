@@ -1,6 +1,6 @@
 # Megaprosjekt – AIS2105
 
-This repository contains a **complete MoveIt 2 + ROS 2 pipeline** that lets a UR‑manipulator find, identify and point at three coloured cubes on a table – from keyboard trigger to camera vision, planning scene updates and motion execution.
+This repository contains a **complete MoveIt 2 + ROS 2 pipeline** that lets a UR‑manipulator find, identify and point at four coloured cubes on a table – from keyboard trigger to camera vision, planning scene updates and motion execution.
 
 ---
 

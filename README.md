@@ -83,31 +83,6 @@ Press **W** to kick off the sequence, **Space** for emergency stop, **Enter** to
 
 ---
 
-## System Graph
-
-```mermaid
-flowchart TB
-  subgraph Vision
-    CAM[usb_cam] -->|"sensor_msgs/Image"| PROC[camera_processor]
-    PROC -->|"process_msgs/CubeArray"| SCENE(scene_handler)
-  end
-
-  subgraph Logic
-    INPUT[input_handler] -->|"process_msgs/KeyEvent"| FSM[process_handler]
-    SCENE -->|"process_msgs/SceneState"| FSM
-    FSM -->|"process_msgs/Task"| CTRL[robot_controller]
-    CTRL -->|"process_msgs/TaskFeedback"| FSM
-  end
-
-  subgraph Motion
-    CTRL -. plan / execute .-> MOVEIT[move_group]
-    MOVEIT -->|JointTrajectory| UR[ur_driver]
-    CTRL -->|sensor_msgs/JointState| SCENE
-  end
-```
-
----
-
 ## Building Individual Packages
 
 Need to tweak just one node? Example for the vision stack:
